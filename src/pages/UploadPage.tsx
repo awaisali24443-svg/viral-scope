@@ -45,8 +45,8 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
   const handleFile = (selectedFile: File) => {
     const validTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
     if (validTypes.includes(selectedFile.type)) {
-      if (selectedFile.size > 50 * 1024 * 1024) {
-        alert('File size exceeds 50MB limit.');
+      if (selectedFile.size > 15 * 1024 * 1024) {
+        alert('File size exceeds 15MB limit.');
         return;
       }
       setLocalFile(selectedFile);
@@ -105,7 +105,7 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
                 <p className="mb-2 text-sm text-slate-600">
                   <span className="font-semibold text-indigo-600">Click to upload</span> or drag and drop
                 </p>
-                <p className="text-xs text-slate-500">MP4, MOV, WEBM (Max 50MB)</p>
+                <p className="text-xs text-slate-500">MP4, MOV, WEBM (Max 15MB)</p>
               </div>
             ) : (
               <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-xl">

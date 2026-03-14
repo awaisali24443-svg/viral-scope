@@ -20,6 +20,9 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
       return;
     }
 
+    let isMounted = true;
+    let progressInterval: NodeJS.Timeout;
+
     const analyzeVideo = async () => {
       try {
         const platform = sessionStorage.getItem('targetPlatform') || 'TikTok';
@@ -31,11 +34,13 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
         formData.append('region', region);
 
         // Simulate progress while waiting for the real API
-        const progressInterval = setInterval(() => {
-          setProgress(p => {
-            if (p >= 90) return 90; // Hold at 90% until done
-            return p + Math.random() * 10;
-          });
+        progressInterval = setInterval(() => {
+          if (isMounted) {
+            setProgress(p => {
+              if (p >= 90) return 90; // Hold at 90% until done
+              return p + Math.random() * 10;
+            });
+          }
         }, 1000);
 
         const response = await fetch('/api/analyze', {
@@ -44,7 +49,7 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
         });
 
         clearInterval(progressInterval);
-        setProgress(100);
+        if (isMounted) setProgress(100);
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -52,20 +57,30 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
         }
 
         const data: ViralReport = await response.json();
-        setReport(data);
         
-        // Small delay to show 100% before navigating
-        setTimeout(() => {
-          navigate('/results');
-        }, 500);
+        if (isMounted) {
+          setReport(data);
+          // Small delay to show 100% before navigating
+          setTimeout(() => {
+            if (isMounted) navigate('/results');
+          }, 500);
+        }
 
       } catch (err: any) {
         console.error(err);
-        setError(err.message || 'An unexpected error occurred during analysis.');
+        if (isMounted) {
+          clearInterval(progressInterval);
+          setError(err.message || 'An unexpected error occurred during analysis.');
+        }
       }
     };
 
     analyzeVideo();
+
+    return () => {
+      isMounted = false;
+      if (progressInterval) clearInterval(progressInterval);
+    };
   }, [videoFile, navigate, setReport]);
 
   if (error) {
