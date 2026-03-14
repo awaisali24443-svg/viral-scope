@@ -33,11 +33,10 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
         formData.append('platform', platform);
         formData.append('region', region);
 
-        // Simulate progress while waiting for the real API
         progressInterval = setInterval(() => {
           if (isMounted) {
             setProgress(p => {
-              if (p >= 90) return 90; // Hold at 90% until done
+              if (p >= 90) return 90;
               return p + Math.random() * 10;
             });
           }
@@ -60,10 +59,9 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
         
         if (isMounted) {
           setReport(data);
-          // Small delay to show 100% before navigating
           setTimeout(() => {
             if (isMounted) navigate('/results');
-          }, 500);
+          }, 800);
         }
 
       } catch (err: any) {
@@ -86,12 +84,12 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
   if (error) {
     return (
       <div className="min-h-[80vh] flex flex-col items-center justify-center px-4">
-        <div className="bg-red-50 text-red-600 p-6 rounded-2xl max-w-md text-center border border-red-100">
-          <h2 className="text-xl font-bold mb-2">Analysis Failed</h2>
-          <p className="mb-6">{error}</p>
+        <div className="bg-rose-500/10 text-rose-400 p-8 rounded-3xl max-w-md text-center border border-rose-500/20 backdrop-blur-sm">
+          <h2 className="text-2xl font-bold mb-3">Analysis Failed</h2>
+          <p className="mb-8 text-rose-300/80">{error}</p>
           <button
             onClick={() => navigate('/upload')}
-            className="bg-red-600 text-white px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors"
+            className="bg-rose-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-rose-600 transition-colors"
           >
             Try Again
           </button>
@@ -101,17 +99,17 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
   }
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4">
+    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 relative z-10">
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="text-center max-w-md w-full"
       >
-        <div className="relative inline-flex items-center justify-center w-24 h-24 mb-8">
-          <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
-          <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+        <div className="relative inline-flex items-center justify-center w-32 h-32 mb-10">
+          <div className="absolute inset-0 border-4 border-white/5 rounded-full"></div>
+          <svg className="absolute inset-0 w-full h-full -rotate-90 drop-shadow-[0_0_15px_rgba(99,102,241,0.5)]" viewBox="0 0 100 100">
             <circle
-              className="text-indigo-600 stroke-current transition-all duration-300 ease-out"
+              className="text-indigo-500 stroke-current transition-all duration-300 ease-out"
               strokeWidth="4"
               strokeLinecap="round"
               fill="transparent"
@@ -122,30 +120,30 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
               strokeDashoffset={301.59 - (progress / 100) * 301.59}
             />
           </svg>
-          <Sparkles className="w-8 h-8 text-indigo-600 animate-pulse" />
+          <Sparkles className="w-10 h-10 text-indigo-400 animate-pulse" />
         </div>
 
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Analyzing your video...</h2>
-        <p className="text-slate-500 mb-8">
+        <h2 className="text-3xl font-bold text-white mb-3">Analyzing your video...</h2>
+        <p className="text-slate-400 mb-10 text-lg">
           Our AI is evaluating hook strength, emotional impact, and comparing against current trends.
         </p>
 
-        <div className="space-y-3 text-sm text-slate-600 text-left bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <div className="flex items-center gap-3">
-            {progress > 10 ? <CheckCircle /> : <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />}
-            <span className={progress > 10 ? "text-slate-900" : ""}>Extracting visual features</span>
+        <div className="space-y-4 text-sm text-slate-300 text-left bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-md">
+          <div className="flex items-center gap-4">
+            {progress > 10 ? <CheckCircle /> : <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />}
+            <span className={progress > 10 ? "text-white font-medium" : ""}>Extracting visual features</span>
           </div>
-          <div className="flex items-center gap-3">
-            {progress > 40 ? <CheckCircle /> : progress > 10 ? <Loader2 className="w-4 h-4 animate-spin text-indigo-500" /> : <div className="w-4 h-4 rounded-full border-2 border-slate-200" />}
-            <span className={progress > 40 ? "text-slate-900" : progress > 10 ? "" : "text-slate-400"}>Analyzing emotional signals</span>
+          <div className="flex items-center gap-4">
+            {progress > 40 ? <CheckCircle /> : progress > 10 ? <Loader2 className="w-5 h-5 animate-spin text-indigo-400" /> : <div className="w-5 h-5 rounded-full border-2 border-white/10" />}
+            <span className={progress > 40 ? "text-white font-medium" : progress > 10 ? "" : "text-slate-600"}>Analyzing emotional signals</span>
           </div>
-          <div className="flex items-center gap-3">
-            {progress > 70 ? <CheckCircle /> : progress > 40 ? <Loader2 className="w-4 h-4 animate-spin text-indigo-500" /> : <div className="w-4 h-4 rounded-full border-2 border-slate-200" />}
-            <span className={progress > 70 ? "text-slate-900" : progress > 40 ? "" : "text-slate-400"}>Comparing with regional trends</span>
+          <div className="flex items-center gap-4">
+            {progress > 70 ? <CheckCircle /> : progress > 40 ? <Loader2 className="w-5 h-5 animate-spin text-indigo-400" /> : <div className="w-5 h-5 rounded-full border-2 border-white/10" />}
+            <span className={progress > 70 ? "text-white font-medium" : progress > 40 ? "" : "text-slate-600"}>Comparing with regional trends</span>
           </div>
-          <div className="flex items-center gap-3">
-            {progress >= 100 ? <CheckCircle /> : progress > 70 ? <Loader2 className="w-4 h-4 animate-spin text-indigo-500" /> : <div className="w-4 h-4 rounded-full border-2 border-slate-200" />}
-            <span className={progress >= 100 ? "text-slate-900" : progress > 70 ? "" : "text-slate-400"}>Generating viral strategy</span>
+          <div className="flex items-center gap-4">
+            {progress >= 100 ? <CheckCircle /> : progress > 70 ? <Loader2 className="w-5 h-5 animate-spin text-indigo-400" /> : <div className="w-5 h-5 rounded-full border-2 border-white/10" />}
+            <span className={progress >= 100 ? "text-white font-medium" : progress > 70 ? "" : "text-slate-600"}>Generating viral strategy</span>
           </div>
         </div>
       </motion.div>
@@ -155,7 +153,7 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
 
 function CheckCircle() {
   return (
-    <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <svg className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
     </svg>
   );

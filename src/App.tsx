@@ -12,9 +12,9 @@ export default function App() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-[#050505] text-slate-50 font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
       <Navbar />
-      <main>
+      <main className="relative">
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route 
