@@ -118,7 +118,7 @@ app.post('/api/analyze', upload.single('video'), async (req, res) => {
     `;
 
     const response = await aiClient.models.generateContent({
-      model: 'gemini-3.1-pro-preview',
+      model: 'gemini-3-flash-preview',
       contents: [
         {
           inlineData: {
@@ -175,7 +175,13 @@ app.post('/api/analyze', upload.single('video'), async (req, res) => {
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
-    res.status(500).json({ error: error.message || 'An error occurred during analysis' });
+    
+    let errorMessage = error.message || 'An error occurred during analysis';
+    if (error.status === 429 || errorMessage.toLowerCase().includes('quota')) {
+      errorMessage = 'Gemini API Quota Exceeded. Video analysis requires a large number of tokens. Please try a shorter video, wait a minute for your per-minute quota to reset, or check your Google AI Studio billing tier.';
+    }
+    
+    res.status(500).json({ error: errorMessage });
   }
 });
 
