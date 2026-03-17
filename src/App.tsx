@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 import UploadPage from './pages/UploadPage';
 import AnalysisPage from './pages/AnalysisPage';
 import ResultsPage from './pages/ResultsPage';
+import TrendsPage from './pages/TrendsPage';
 import { ViralReport } from './types';
 import Navbar from './components/Navbar';
 
@@ -28,6 +29,10 @@ export default function App() {
           <Route 
             path="/results" 
             element={<ResultsPage report={report} />} 
+          />
+          <Route 
+            path="/trends" 
+            element={<TrendsPage />} 
           />
         </Routes>
       </main>

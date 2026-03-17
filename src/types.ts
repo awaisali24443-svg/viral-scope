@@ -1,3 +1,21 @@
+export interface TrendingVideo {
+  id: string;
+  title: string;
+  channelName: string;
+  views: string;
+  thumbnail: string;
+  category: string;
+  tags: string[];
+  region: string;
+}
+
+export interface TrendsData {
+  lastUpdated: string;
+  videos: TrendingVideo[];
+  topCategory: string;
+  topTags: string[];
+}
+
 export interface ViralReport {
   videoTopic: string;
   detectedEmotions: string[];

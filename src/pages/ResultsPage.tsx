@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
+import html2canvas from 'html2canvas';
 import { ViralReport } from '../types';
 import { 
-  Flame, Target, Clock, Globe2, Lightbulb, Hash, Video, Smile
+  Flame, Target, Clock, Globe2, Lightbulb, Hash, Video, Smile, Download, Loader2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -13,6 +14,8 @@ interface ResultsPageProps {
 
 export default function ResultsPage({ report }: ResultsPageProps) {
   const navigate = useNavigate();
+  const scorecardRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     if (!report) {
@@ -21,6 +24,30 @@ export default function ResultsPage({ report }: ResultsPageProps) {
   }, [report, navigate]);
 
   if (!report) return null;
+
+  const handleDownload = async () => {
+    if (!scorecardRef.current) return;
+    
+    try {
+      setIsDownloading(true);
+      const canvas = await html2canvas(scorecardRef.current, {
+        backgroundColor: '#0f0f13',
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true,
+      });
+      
+      const image = canvas.toDataURL('image/png', 1.0);
+      const link = document.createElement('a');
+      link.download = `viral-scorecard-${Date.now()}.png`;
+      link.href = image;
+      link.click();
+    } catch (error) {
+      console.error('Failed to generate scorecard image:', error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const getScoreColor = (score: number, max: number = 10) => {
     const percentage = score / max;
@@ -43,17 +70,27 @@ export default function ResultsPage({ report }: ResultsPageProps) {
           <h1 className="text-4xl font-extrabold text-white tracking-tight">Viral Strategy Report</h1>
           <p className="mt-2 text-lg text-slate-400">AI-generated analysis and optimization plan.</p>
         </div>
-        <button
-          onClick={() => navigate('/upload')}
-          className="rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white border border-white/10 hover:bg-white/20 transition-all hover:scale-105"
-        >
-          Analyze Another Video
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={handleDownload}
+            disabled={isDownloading}
+            className="flex items-center gap-2 rounded-full bg-indigo-500 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-600 transition-all hover:scale-105 disabled:opacity-70 disabled:hover:scale-100"
+          >
+            {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            {isDownloading ? 'Generating...' : 'Download Scorecard'}
+          </button>
+          <button
+            onClick={() => navigate('/upload')}
+            className="rounded-full bg-white/10 px-6 py-3 text-sm font-semibold text-white border border-white/10 hover:bg-white/20 transition-all hover:scale-105"
+          >
+            Analyze Another Video
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Main Score & Key Metrics */}
-        <div className="space-y-8 lg:col-span-1">
+        <div className="space-y-8 lg:col-span-1" ref={scorecardRef}>
           {/* Viral Potential Score Card */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}

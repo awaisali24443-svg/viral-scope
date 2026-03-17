@@ -1,7 +1,10 @@
-import { Link } from 'react-router-dom';
-import { Activity } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Activity, TrendingUp } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 export default function Navbar() {
+  const location = useLocation();
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#050505]/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -13,7 +16,17 @@ export default function Navbar() {
             ViralScope <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400">AI</span>
           </span>
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
+          <Link
+            to="/trends"
+            className={cn(
+              "flex items-center gap-2 text-sm font-medium transition-colors hover:text-white",
+              location.pathname === '/trends' ? "text-white" : "text-slate-400"
+            )}
+          >
+            <TrendingUp className="w-4 h-4" />
+            Live Trends
+          </Link>
           <Link
             to="/upload"
             className="rounded-full bg-white/10 border border-white/10 px-5 py-2 text-sm font-semibold text-white transition-all hover:bg-white/20 hover:scale-105"

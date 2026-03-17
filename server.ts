@@ -5,12 +5,25 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import { GoogleGenAI, Type } from '@google/genai';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 const PORT = 3000;
 
+// Trust proxy is required if behind a load balancer (like Cloud Run)
+app.set('trust proxy', 1);
+
 app.use(cors());
 app.use(express.json());
+
+// Set up rate limiter for the analyze endpoint
+const analyzeLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10, // Limit each IP to 10 requests per hour
+  message: { error: 'Too many videos analyzed from this IP. Please try again after an hour to protect our free API limits.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Set up multer for video uploads
 const uploadDir = path.join(process.cwd(), 'uploads');
@@ -46,44 +59,81 @@ function getAI() {
   return ai;
 }
 
-// Simple JSON storage for trends
-const trendsFile = path.join(process.cwd(), 'trends.json');
-if (!fs.existsSync(trendsFile)) {
-  fs.writeFileSync(trendsFile, JSON.stringify({
-    lastUpdated: new Date().toISOString(),
-    trends: [
-      { category: 'Comedy', tags: ['#funny', '#prank', '#humor'], engagementLevel: 'High', region: 'North America' },
-      { category: 'Education', tags: ['#tutorial', '#howto', '#learn'], engagementLevel: 'Medium', region: 'Europe' },
-      { category: 'Gaming', tags: ['#gaming', '#highlights', '#streamer'], engagementLevel: 'High', region: 'South Asia' },
-    ]
-  }));
-}
-
-// Trend collection script (Simulated for YouTube Data API)
-setInterval(() => {
-  console.log('Collecting trending information...');
-  // In a real scenario, this would call the YouTube Data API
-  // and update the trends.json file.
-  const trends = JSON.parse(fs.readFileSync(trendsFile, 'utf-8'));
-  trends.lastUpdated = new Date().toISOString();
-  fs.writeFileSync(trendsFile, JSON.stringify(trends, null, 2));
-}, 60 * 60 * 1000); // Every hour
-
 // API Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/api/trends', (req, res) => {
+app.get('/api/trends', async (req, res) => {
   try {
-    const trends = JSON.parse(fs.readFileSync(trendsFile, 'utf-8'));
-    res.json(trends);
+    const region = (req.query.region as string) || 'US';
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    
+    if (!apiKey) {
+      return res.status(500).json({ error: 'YouTube API key is not configured. Please add YOUTUBE_API_KEY to environment variables.' });
+    }
+
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=${region}&maxResults=12&key=${apiKey}`;
+    
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('YouTube API Error:', data);
+      return res.status(response.status).json({ error: 'Failed to fetch trends from YouTube API' });
+    }
+
+    // Map YouTube category IDs to readable names
+    const categoryMap: Record<string, string> = {
+      '1': 'Film & Animation', '2': 'Autos & Vehicles', '10': 'Music', '15': 'Pets & Animals',
+      '17': 'Sports', '19': 'Travel & Events', '20': 'Gaming', '22': 'People & Blogs',
+      '23': 'Comedy', '24': 'Entertainment', '25': 'News & Politics', '26': 'Howto & Style',
+      '27': 'Education', '28': 'Science & Technology', '29': 'Nonprofits & Activism'
+    };
+
+    const videos = data.items.map((item: any) => ({
+      id: item.id,
+      title: item.snippet.title,
+      channelName: item.snippet.channelTitle,
+      views: item.statistics.viewCount,
+      thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+      category: categoryMap[item.snippet.categoryId] || 'Other',
+      tags: item.snippet.tags || [],
+      region: region
+    }));
+
+    // Calculate top category
+    const categoryCounts: Record<string, number> = {};
+    videos.forEach((v: any) => {
+      categoryCounts[v.category] = (categoryCounts[v.category] || 0) + 1;
+    });
+    const topCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Mixed';
+
+    // Calculate top tags
+    const tagCounts: Record<string, number> = {};
+    videos.forEach((v: any) => {
+      v.tags.forEach((tag: string) => {
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      });
+    });
+    const topTags = Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(t => t[0]);
+
+    res.json({
+      lastUpdated: new Date().toISOString(),
+      videos,
+      topCategory,
+      topTags
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to read trends data' });
+    console.error('Trends API Error:', error);
+    res.status(500).json({ error: 'Internal server error while fetching trends' });
   }
 });
 
-app.post('/api/analyze', upload.single('video'), async (req, res) => {
+app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No video file uploaded' });
