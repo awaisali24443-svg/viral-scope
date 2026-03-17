@@ -75,14 +75,14 @@ export default function TrendsPage() {
       {/* Header Section */}
       <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight flex items-center gap-3">
+          <h1 className="text-4xl font-extrabold text-white tracking-tight flex items-center gap-3 font-display">
             <TrendingUp className="w-10 h-10 text-indigo-400" />
-            Live Global Trends
+            Local Trends
           </h1>
-          <p className="mt-2 text-lg text-slate-400">Real-time trending content from YouTube.</p>
+          <p className="mt-2 text-lg text-slate-400">Real-time trending content by region.</p>
         </div>
         
-        <div className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-full px-4 py-2 backdrop-blur-md">
+        <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.05] rounded-full px-4 py-2 backdrop-blur-md">
           <Globe2 className="w-5 h-5 text-slate-400" />
           <select
             value={region}
@@ -122,7 +122,7 @@ export default function TrendsPage() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-br from-indigo-500/20 to-fuchsia-500/20 border border-white/10 rounded-3xl p-6 flex items-center gap-6"
+              className="bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 border border-indigo-500/20 rounded-3xl p-6 flex items-center gap-6 backdrop-blur-md hover:border-indigo-500/40 transition-colors"
             >
               <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
                 <Youtube className="w-8 h-8 text-indigo-400" />
@@ -137,7 +137,7 @@ export default function TrendsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white/5 border border-white/10 rounded-3xl p-6 flex items-center gap-6 backdrop-blur-md"
+              className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-6 flex items-center gap-6 backdrop-blur-md hover:border-white/10 transition-colors"
             >
               <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center flex-shrink-0">
                 <Clock className="w-8 h-8 text-slate-400" />
@@ -155,9 +155,9 @@ export default function TrendsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md"
+            className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 backdrop-blur-md"
           >
-            <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-6">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-6 font-display">
               <Hash className="w-5 h-5 text-indigo-400" />
               Trending Keywords & Tags
             </h3>
@@ -179,7 +179,7 @@ export default function TrendsPage() {
 
           {/* Trending Videos Grid */}
           <div>
-            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+            <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 font-display">
               <TrendingUp className="w-6 h-6 text-fuchsia-400" />
               Top Videos in {REGIONS.find(r => r.code === region)?.name}
             </h3>
@@ -191,7 +191,7 @@ export default function TrendsPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 * Math.min(idx, 10) }}
-                  className="group bg-[#111116] border border-white/5 rounded-2xl overflow-hidden hover:border-indigo-500/30 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.1)] flex flex-col"
+                  className="group bg-white/[0.02] border border-white/[0.05] rounded-2xl overflow-hidden hover:border-indigo-500/30 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.1)] flex flex-col"
                 >
                   <div className="relative aspect-video overflow-hidden bg-black">
                     <img 

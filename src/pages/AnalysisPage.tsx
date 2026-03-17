@@ -123,12 +123,12 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
           <Sparkles className="w-10 h-10 text-indigo-400 animate-pulse" />
         </div>
 
-        <h2 className="text-3xl font-bold text-white mb-3">Analyzing your video...</h2>
+        <h2 className="text-3xl font-bold text-white mb-3 font-display">Analyzing your video...</h2>
         <p className="text-slate-400 mb-10 text-lg">
           Our AI is evaluating hook strength, emotional impact, and comparing against current trends.
         </p>
 
-        <div className="space-y-4 text-sm text-slate-300 text-left bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-md">
+        <div className="space-y-4 text-sm text-slate-300 text-left bg-white/[0.02] p-8 rounded-3xl border border-white/[0.05] backdrop-blur-md">
           <div className="flex items-center gap-4">
             {progress > 10 ? <CheckCircle /> : <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />}
             <span className={progress > 10 ? "text-white font-medium" : ""}>Extracting visual features</span>

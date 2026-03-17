@@ -67,10 +67,10 @@ export default function ResultsPage({ report }: ResultsPageProps) {
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 relative z-10">
       <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">Viral Strategy Report</h1>
+          <h1 className="text-4xl font-extrabold text-white tracking-tight font-display">Viral Strategy Report</h1>
           <p className="mt-2 text-lg text-slate-400">AI-generated analysis and optimization plan.</p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-4">
           <button
             onClick={handleDownload}
             disabled={isDownloading}
@@ -117,9 +117,9 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white/5 rounded-3xl p-8 border border-white/10 space-y-8 backdrop-blur-md"
+            className="bg-white/[0.02] rounded-3xl p-8 border border-white/[0.05] space-y-8 backdrop-blur-md"
           >
-            <h3 className="font-bold text-white flex items-center gap-2 text-lg">
+            <h3 className="font-bold text-white flex items-center gap-2 text-lg font-display">
               <Target className="w-5 h-5 text-indigo-400" />
               Core Metrics
             </h3>
@@ -134,7 +134,7 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white/5 rounded-3xl p-8 border border-white/10 space-y-6 backdrop-blur-md"
+            className="bg-white/[0.02] rounded-3xl p-8 border border-white/[0.05] space-y-6 backdrop-blur-md"
           >
             <div>
               <h3 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Best Platform</h3>
@@ -157,9 +157,9 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white/5 rounded-3xl p-8 lg:p-10 border border-white/10 backdrop-blur-md"
+            className="bg-white/[0.02] rounded-3xl p-8 lg:p-10 border border-white/[0.05] backdrop-blur-md"
           >
-            <h3 className="text-2xl font-bold text-white mb-8">Content Analysis</h3>
+            <h3 className="text-2xl font-bold text-white mb-8 font-display">Content Analysis</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div>
@@ -211,9 +211,9 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white/5 rounded-3xl p-8 lg:p-10 border border-white/10 backdrop-blur-md"
+            className="bg-white/[0.02] rounded-3xl p-8 lg:p-10 border border-white/[0.05] backdrop-blur-md"
           >
-            <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+            <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3 font-display">
               <Lightbulb className="w-7 h-7 text-amber-400" />
               Optimization Strategy
             </h3>
