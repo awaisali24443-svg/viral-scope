@@ -544,11 +544,14 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
     }
     
     let errorMessage = error.message || 'An error occurred during analysis';
-    if (error.status === 429 || errorMessage.toLowerCase().includes('quota')) {
-      errorMessage = 'Gemini API Quota Exceeded. Video analysis requires a large number of tokens. Please try a shorter video, wait a minute for your per-minute quota to reset, or check your Google AI Studio billing tier.';
+    let statusCode = 500;
+    
+    if (error.status === 429 || errorMessage.toLowerCase().includes('quota') || errorMessage.toLowerCase().includes('too many requests')) {
+      statusCode = 429;
+      errorMessage = 'Gemini API Quota Exceeded. You have been placed in the queue and your request will retry automatically.';
     }
     
-    res.status(500).json({ error: errorMessage });
+    res.status(statusCode).json({ error: errorMessage });
   }
 });
 

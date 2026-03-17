@@ -45,7 +45,7 @@ export default function BlogPage() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 relative z-10">
         <div className="mb-12 text-center max-w-3xl mx-auto">
           <h1 className="text-4xl font-extrabold text-white tracking-tight flex items-center justify-center gap-3 font-display mb-4">
-            <BookOpen className="w-10 h-10 text-indigo-400" />
+            <BookOpen className="w-10 h-10 text-cyan-400" />
             Viral Content Strategies
           </h1>
           <p className="text-lg text-slate-400">
@@ -55,7 +55,7 @@ export default function BlogPage() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-4" />
+            <Loader2 className="w-12 h-12 text-cyan-500 animate-spin mb-4" />
             <p className="text-slate-400 font-medium animate-pulse">Loading articles...</p>
           </div>
         ) : error ? (
@@ -78,7 +78,7 @@ export default function BlogPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="group flex flex-col bg-white/[0.02] border border-white/[0.05] rounded-3xl overflow-hidden hover:border-indigo-500/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(99,102,241,0.1)]"
+                className="group flex flex-col bg-white/[0.02] border border-white/[0.05] rounded-3xl overflow-hidden hover:border-cyan-500/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(34,211,238,0.1)]"
               >
                 <div className="p-8 flex flex-col flex-grow">
                   <div className="flex items-center gap-4 text-xs text-slate-400 mb-4">
@@ -92,7 +92,7 @@ export default function BlogPage() {
                     </div>
                   </div>
                   
-                  <Link to={`/blog/${article.slug}`} className="block group-hover:text-indigo-300 transition-colors">
+                  <Link to={`/blog/${article.slug}`} className="block group-hover:text-cyan-300 transition-colors">
                     <h2 className="text-2xl font-bold text-white mb-3 line-clamp-2 font-display">
                       {article.title}
                     </h2>
@@ -106,7 +106,7 @@ export default function BlogPage() {
                     <span className="text-sm font-medium text-slate-300">By {article.author}</span>
                     <Link 
                       to={`/blog/${article.slug}`}
-                      className="text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1"
+                      className="text-sm font-bold text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1"
                     >
                       Read Article &rarr;
                     </Link>

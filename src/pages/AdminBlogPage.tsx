@@ -61,8 +61,8 @@ export default function AdminBlogPage() {
           className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 backdrop-blur-md"
         >
           <div className="flex items-center gap-4 mb-8">
-            <div className="bg-indigo-500/10 p-3 rounded-xl border border-indigo-500/20">
-              <PenTool className="w-6 h-6 text-indigo-400" />
+            <div className="bg-cyan-500/10 p-3 rounded-xl border border-cyan-500/20">
+              <PenTool className="w-6 h-6 text-cyan-400" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white font-display">AI Content Generator</h1>
@@ -83,7 +83,7 @@ export default function AdminBlogPage() {
                   value={adminSecret}
                   onChange={(e) => setAdminSecret(e.target.value)}
                   placeholder="Enter the ADMIN_SECRET"
-                  className="w-full bg-[#030303] border border-white/[0.1] rounded-xl pl-12 pr-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                  className="w-full bg-[#030303] border border-white/[0.1] rounded-xl pl-12 pr-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
                   required
                   disabled={isGenerating}
                 />
@@ -100,7 +100,7 @@ export default function AdminBlogPage() {
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="e.g., How to go viral on YouTube Shorts in 2026"
-                className="w-full bg-[#030303] border border-white/[0.1] rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                className="w-full bg-[#030303] border border-white/[0.1] rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all"
                 required
                 disabled={isGenerating}
               />
@@ -109,7 +109,7 @@ export default function AdminBlogPage() {
             <button
               type="submit"
               disabled={isGenerating || !topic.trim()}
-              className="w-full flex items-center justify-center gap-2 bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3.5 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-3.5 rounded-xl font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isGenerating ? (
                 <>
@@ -131,7 +131,7 @@ export default function AdminBlogPage() {
               animate={{ opacity: 1, height: 'auto' }}
               className={`mt-6 p-4 rounded-xl border flex items-start gap-3 ${
                 result.success 
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
+                  ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' 
                   : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
               }`}
             >
@@ -143,7 +143,7 @@ export default function AdminBlogPage() {
                     href={`/blog/${result.slug}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-sm underline mt-1 inline-block hover:text-emerald-300"
+                    className="text-sm underline mt-1 inline-block hover:text-blue-300"
                   >
                     View Published Article &rarr;
                   </a>

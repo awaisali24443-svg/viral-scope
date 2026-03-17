@@ -85,7 +85,7 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
               <div
                 className={cn(
                   "relative flex flex-col items-center justify-center w-full h-72 border-2 border-dashed rounded-2xl transition-all cursor-pointer overflow-hidden group",
-                  dragActive ? "border-indigo-500 bg-indigo-500/10 shadow-[0_0_30px_rgba(99,102,241,0.2)]" : "border-white/20 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/40"
+                  dragActive ? "border-cyan-500 bg-cyan-500/10 shadow-[0_0_30px_rgba(34,211,238,0.2)]" : "border-white/20 bg-white/[0.02] hover:bg-white/[0.04] hover:border-white/40"
                 )}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -101,16 +101,16 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
                   className="hidden"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 pointer-events-none" />
-                <UploadCloud className={cn("w-14 h-14 mb-4 transition-transform group-hover:scale-110 group-hover:-translate-y-1", dragActive ? "text-indigo-400" : "text-slate-400")} />
+                <UploadCloud className={cn("w-14 h-14 mb-4 transition-transform group-hover:scale-110 group-hover:-translate-y-1", dragActive ? "text-cyan-400" : "text-slate-400")} />
                 <p className="mb-2 text-base text-slate-300">
-                  <span className="font-bold text-indigo-400">Click to upload</span> or drag and drop
+                  <span className="font-bold text-cyan-400">Click to upload</span> or drag and drop
                 </p>
                 <p className="text-sm text-slate-500">MP4, MOV, WEBM (Max 15MB)</p>
               </div>
             ) : (
               <div className="flex items-center justify-between p-4 bg-white/[0.03] border border-white/10 rounded-2xl shadow-lg">
                 <div className="flex items-center gap-4 overflow-hidden">
-                  <div className="p-3 bg-indigo-500/20 text-indigo-400 rounded-xl shrink-0">
+                  <div className="p-3 bg-cyan-500/20 text-cyan-400 rounded-xl shrink-0">
                     <Video className="w-6 h-6" />
                   </div>
                   <div className="truncate">
@@ -139,7 +139,7 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
                 id="platform"
                 value={platform}
                 onChange={(e) => setPlatform(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3.5 text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 appearance-none font-medium transition-colors"
+                className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3.5 text-white focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 appearance-none font-medium transition-colors"
               >
                 <option value="TikTok">TikTok</option>
                 <option value="YouTube Shorts">YouTube Shorts</option>
@@ -156,7 +156,7 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
                 id="region"
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3.5 text-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 appearance-none font-medium transition-colors"
+                className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3.5 text-white focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 appearance-none font-medium transition-colors"
               >
                 <option value="North America">North America</option>
                 <option value="South Asia">South Asia</option>

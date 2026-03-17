@@ -12,13 +12,26 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo - Left */}
         <div className="flex-1 flex items-center justify-start">
-          <Link to="/" className="flex items-center gap-2 group" onClick={() => setIsMobileMenuOpen(false)}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-fuchsia-600 text-white shadow-[0_0_15px_rgba(99,102,241,0.4)] transition-transform group-hover:scale-105">
-              <Activity className="h-5 w-5" />
+          <Link to="/" className="flex items-center gap-2.5 group" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.03] border border-white/10 shadow-[0_0_20px_rgba(34,211,238,0.1)] group-hover:shadow-[0_0_25px_rgba(34,211,238,0.2)] group-hover:bg-white/[0.05] transition-all duration-300">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 7L12 20L20 7" stroke="url(#v-grad)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 4L12 2" stroke="#22d3ee" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M17 4L19 2" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M7 4L5 2" stroke="#22d3ee" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <defs>
+                  <linearGradient id="v-grad" x1="4" y1="7" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#22d3ee" />
+                    <stop offset="1" stopColor="#3b82f6" />
+                  </linearGradient>
+                </defs>
+              </svg>
             </div>
-            <span className="text-xl font-bold tracking-tight text-white font-display">
-              ViralScope <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-fuchsia-400">AI</span>
-            </span>
+            <div className="flex items-center">
+              <span className="text-2xl font-display font-bold text-white tracking-tight">
+                Viral<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Scope</span>
+              </span>
+            </div>
           </Link>
         </div>
         

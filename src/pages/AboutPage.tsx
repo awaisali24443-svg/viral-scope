@@ -4,13 +4,13 @@ export default function AboutPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8 relative z-10">
       <div className="flex items-center gap-4 mb-8">
-        <div className="p-3 bg-emerald-500/20 rounded-xl">
-          <Info className="w-8 h-8 text-emerald-400" />
+        <div className="p-3 bg-blue-500/20 rounded-xl">
+          <Info className="w-8 h-8 text-blue-400" />
         </div>
         <h1 className="text-4xl font-bold text-white font-display">About Us</h1>
       </div>
       
-      <div className="prose prose-invert prose-emerald max-w-none bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 md:p-12 backdrop-blur-md">
+      <div className="prose prose-invert prose-blue max-w-none bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 md:p-12 backdrop-blur-md">
         <p className="text-slate-300 text-lg leading-relaxed mb-6">
           Welcome to ViralScope AI, the ultimate tool for content creators, marketers, and data analysts to understand what makes videos go viral on YouTube.
         </p>

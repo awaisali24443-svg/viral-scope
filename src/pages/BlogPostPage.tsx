@@ -48,7 +48,7 @@ export default function BlogPostPage() {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-4" />
+        <Loader2 className="w-12 h-12 text-cyan-500 animate-spin mb-4" />
         <p className="text-slate-400 font-medium animate-pulse">Loading article...</p>
       </div>
     );
@@ -104,15 +104,15 @@ export default function BlogPostPage() {
             
             <div className="flex flex-wrap items-center gap-6 text-sm text-slate-400">
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-indigo-400" />
+                <User className="w-4 h-4 text-cyan-400" />
                 <span className="font-medium text-slate-300">{article.author}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-indigo-400" />
+                <Calendar className="w-4 h-4 text-cyan-400" />
                 <span>{formatDate(article.publishDate)}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-indigo-400" />
+                <Clock className="w-4 h-4 text-cyan-400" />
                 <span>{article.readingTime}</span>
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function BlogPostPage() {
               {article.keywords.map((keyword, idx) => (
                 <span 
                   key={idx} 
-                  className="px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-medium text-indigo-300"
+                  className="px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-medium text-cyan-300"
                 >
                   {keyword}
                 </span>
@@ -129,7 +129,7 @@ export default function BlogPostPage() {
             </div>
           </header>
 
-          <div className="prose prose-invert prose-lg max-w-none prose-headings:font-display prose-headings:text-white prose-a:text-indigo-400 hover:prose-a:text-indigo-300 prose-img:rounded-2xl prose-img:shadow-2xl prose-strong:text-white prose-code:text-fuchsia-300 prose-code:bg-fuchsia-500/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md">
+          <div className="prose prose-invert prose-lg max-w-none prose-headings:font-display prose-headings:text-white prose-a:text-cyan-400 hover:prose-a:text-cyan-300 prose-img:rounded-2xl prose-img:shadow-2xl prose-strong:text-white prose-code:text-blue-300 prose-code:bg-blue-500/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md">
             <ReactMarkdown
               components={{
                 a: ({ node, href, children, ...props }) => {
@@ -151,7 +151,7 @@ export default function BlogPostPage() {
             </div>
             <Link
               to="/upload"
-              className="whitespace-nowrap rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-600 text-white px-8 py-3.5 text-base font-bold transition-all hover:scale-105 shadow-[0_0_20px_rgba(99,102,241,0.4)]"
+              className="whitespace-nowrap rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-8 py-3.5 text-base font-bold transition-all hover:scale-105 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
             >
               Analyze Your Video
             </Link>

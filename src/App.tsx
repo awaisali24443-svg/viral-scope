@@ -23,7 +23,7 @@ export default function App() {
 
   return (
     <HelmetProvider>
-      <div className="min-h-screen bg-[#030303] text-slate-50 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 relative flex flex-col">
+      <div className="min-h-screen bg-[#030303] text-slate-50 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 relative flex flex-col">
         {/* Global Background Grid */}
         <div className="fixed inset-0 pointer-events-none z-0">
           <div className="absolute inset-0 bg-grid-pattern [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>

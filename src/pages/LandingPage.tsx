@@ -8,8 +8,8 @@ export default function LandingPage() {
     <div className="relative overflow-hidden">
       {/* Atmospheric background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[30%] -left-[10%] w-[70%] h-[70%] rounded-full bg-indigo-600/10 blur-[120px] animate-float" />
-        <div className="absolute top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-fuchsia-600/10 blur-[120px] animate-float-delayed" />
+        <div className="absolute -top-[30%] -left-[10%] w-[70%] h-[70%] rounded-full bg-cyan-600/10 blur-[120px] animate-float" />
+        <div className="absolute top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-blue-600/10 blur-[120px] animate-float-delayed" />
       </div>
 
       {/* Hero Section */}
@@ -25,13 +25,13 @@ export default function LandingPage() {
               <AdSlot format="leaderboard" />
             </div>
 
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-sm font-medium text-indigo-300 mb-8 backdrop-blur-sm shadow-[0_0_20px_rgba(99,102,241,0.1)] hover:bg-white/[0.05] transition-colors cursor-default">
-              <span className="flex h-2 w-2 rounded-full bg-indigo-500 animate-pulse shadow-[0_0_10px_rgba(99,102,241,0.8)]"></span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-sm font-medium text-cyan-300 mb-8 backdrop-blur-sm shadow-[0_0_20px_rgba(34,211,238,0.1)] hover:bg-white/[0.05] transition-colors cursor-default">
+              <span className="flex h-2 w-2 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]"></span>
               Gemini 3.1 Pro Powered
             </div>
             <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-7xl lg:text-8xl mb-8 font-display drop-shadow-2xl">
               Predict Your Video's <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-fuchsia-400 to-rose-400 drop-shadow-sm">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-rose-400 drop-shadow-sm">
                 Viral Potential
               </span>
             </h1>
@@ -55,7 +55,7 @@ export default function LandingPage() {
       <div id="features" className="relative bg-[#030303] py-24 sm:py-32 border-t border-white/[0.05]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:text-center">
-            <h2 className="text-sm font-bold leading-7 text-indigo-400 uppercase tracking-widest font-display">Deep Analysis</h2>
+            <h2 className="text-sm font-bold leading-7 text-cyan-400 uppercase tracking-widest font-display">Deep Analysis</h2>
             <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-5xl font-display">
               Everything you need to go viral
             </p>
@@ -65,27 +65,27 @@ export default function LandingPage() {
           </div>
           <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
             <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-              <div className="group flex flex-col items-start bg-white/[0.02] border border-white/[0.05] p-8 rounded-3xl hover:bg-white/[0.04] hover:border-indigo-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(99,102,241,0.1)]">
-                <div className="rounded-xl bg-indigo-500/10 p-3 ring-1 ring-indigo-500/20 mb-4 group-hover:bg-indigo-500/20 transition-colors">
-                  <Zap className="h-6 w-6 text-indigo-400" />
+              <div className="group flex flex-col items-start bg-white/[0.02] border border-white/[0.05] p-8 rounded-3xl hover:bg-white/[0.04] hover:border-cyan-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(34,211,238,0.1)]">
+                <div className="rounded-xl bg-cyan-500/10 p-3 ring-1 ring-cyan-500/20 mb-4 group-hover:bg-cyan-500/20 transition-colors">
+                  <Zap className="h-6 w-6 text-cyan-400" />
                 </div>
                 <dt className="mt-4 font-bold text-white text-xl font-display">Hook Strength</dt>
                 <dd className="mt-2 leading-7 text-slate-400">
                   We analyze the crucial first 3 seconds of your video to determine if it has the power to stop the scroll and capture attention.
                 </dd>
               </div>
-              <div className="group flex flex-col items-start bg-white/[0.02] border border-white/[0.05] p-8 rounded-3xl hover:bg-white/[0.04] hover:border-fuchsia-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(217,70,239,0.1)]">
-                <div className="rounded-xl bg-fuchsia-500/10 p-3 ring-1 ring-fuchsia-500/20 mb-4 group-hover:bg-fuchsia-500/20 transition-colors">
-                  <TrendingUp className="h-6 w-6 text-fuchsia-400" />
+              <div className="group flex flex-col items-start bg-white/[0.02] border border-white/[0.05] p-8 rounded-3xl hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+                <div className="rounded-xl bg-blue-500/10 p-3 ring-1 ring-blue-500/20 mb-4 group-hover:bg-blue-500/20 transition-colors">
+                  <TrendingUp className="h-6 w-6 text-blue-400" />
                 </div>
                 <dt className="mt-4 font-bold text-white text-xl font-display">Trend Similarity</dt>
                 <dd className="mt-2 leading-7 text-slate-400">
                   Compare your content against real-time trending signals to see if you're riding the wave of current social media algorithms.
                 </dd>
               </div>
-              <div className="group flex flex-col items-start bg-white/[0.02] border border-white/[0.05] p-8 rounded-3xl hover:bg-white/[0.04] hover:border-emerald-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)]">
-                <div className="rounded-xl bg-emerald-500/10 p-3 ring-1 ring-emerald-500/20 mb-4 group-hover:bg-emerald-500/20 transition-colors">
-                  <BarChart3 className="h-6 w-6 text-emerald-400" />
+              <div className="group flex flex-col items-start bg-white/[0.02] border border-white/[0.05] p-8 rounded-3xl hover:bg-white/[0.04] hover:border-blue-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(59,130,246,0.1)]">
+                <div className="rounded-xl bg-blue-500/10 p-3 ring-1 ring-blue-500/20 mb-4 group-hover:bg-blue-500/20 transition-colors">
+                  <BarChart3 className="h-6 w-6 text-blue-400" />
                 </div>
                 <dt className="mt-4 font-bold text-white text-xl font-display">Actionable Strategy</dt>
                 <dd className="mt-2 leading-7 text-slate-400">

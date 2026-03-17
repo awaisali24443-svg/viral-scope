@@ -76,7 +76,7 @@ export default function TrendsPage() {
       <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
           <h1 className="text-4xl font-extrabold text-white tracking-tight flex items-center gap-3 font-display">
-            <TrendingUp className="w-10 h-10 text-indigo-400" />
+            <TrendingUp className="w-10 h-10 text-cyan-400" />
             Local Trends
           </h1>
           <p className="mt-2 text-lg text-slate-400">Real-time trending content by region.</p>
@@ -112,7 +112,7 @@ export default function TrendsPage() {
         </div>
       ) : loading && !data ? (
         <div className="flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-4" />
+          <Loader2 className="w-12 h-12 text-cyan-500 animate-spin mb-4" />
           <p className="text-slate-400 font-medium animate-pulse">Fetching live trends...</p>
         </div>
       ) : data ? (
@@ -122,10 +122,10 @@ export default function TrendsPage() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-br from-indigo-500/10 to-fuchsia-500/10 border border-indigo-500/20 rounded-3xl p-6 flex items-center gap-6 backdrop-blur-md hover:border-indigo-500/40 transition-colors"
+              className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-3xl p-6 flex items-center gap-6 backdrop-blur-md hover:border-cyan-500/40 transition-colors"
             >
-              <div className="w-16 h-16 rounded-2xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0">
-                <Youtube className="w-8 h-8 text-indigo-400" />
+              <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
+                <Youtube className="w-8 h-8 text-cyan-400" />
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-400 uppercase tracking-wider mb-1">Top Trending Category</p>
@@ -158,7 +158,7 @@ export default function TrendsPage() {
             className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-8 backdrop-blur-md"
           >
             <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-6 font-display">
-              <Hash className="w-5 h-5 text-indigo-400" />
+              <Hash className="w-5 h-5 text-cyan-400" />
               Trending Keywords & Tags
             </h3>
             <div className="flex flex-wrap gap-3">
@@ -166,7 +166,7 @@ export default function TrendsPage() {
                 data.topTags.map((tag, idx) => (
                   <span 
                     key={idx}
-                    className="px-4 py-2 bg-[#1a1a24] border border-white/5 rounded-full text-sm font-medium text-slate-300 hover:text-white hover:border-indigo-500/50 transition-colors cursor-default"
+                    className="px-4 py-2 bg-[#1a1a24] border border-white/5 rounded-full text-sm font-medium text-slate-300 hover:text-white hover:border-cyan-500/50 transition-colors cursor-default"
                   >
                     #{tag}
                   </span>
@@ -180,7 +180,7 @@ export default function TrendsPage() {
           {/* Trending Videos Grid */}
           <div>
             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 font-display">
-              <TrendingUp className="w-6 h-6 text-fuchsia-400" />
+              <TrendingUp className="w-6 h-6 text-blue-400" />
               Top Videos in {REGIONS.find(r => r.code === region)?.name}
             </h3>
             
@@ -191,7 +191,7 @@ export default function TrendsPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.1 * Math.min(idx, 10) }}
-                  className="group bg-white/[0.02] border border-white/[0.05] rounded-2xl overflow-hidden hover:border-indigo-500/30 transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.1)] flex flex-col"
+                  className="group bg-white/[0.02] border border-white/[0.05] rounded-2xl overflow-hidden hover:border-cyan-500/30 transition-all hover:shadow-[0_0_30px_rgba(34,211,238,0.1)] flex flex-col"
                 >
                   <div className="relative aspect-video overflow-hidden bg-black">
                     <img 
@@ -201,7 +201,7 @@ export default function TrendsPage() {
                       referrerPolicy="no-referrer"
                     />
                     <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white flex items-center gap-1.5">
-                      <Eye className="w-3.5 h-3.5 text-indigo-400" />
+                      <Eye className="w-3.5 h-3.5 text-cyan-400" />
                       {formatViews(video.views)}
                     </div>
                   </div>
@@ -213,7 +213,7 @@ export default function TrendsPage() {
                       </span>
                     </div>
                     
-                    <h4 className="text-white font-bold leading-snug line-clamp-2 mb-2 group-hover:text-indigo-300 transition-colors">
+                    <h4 className="text-white font-bold leading-snug line-clamp-2 mb-2 group-hover:text-cyan-300 transition-colors">
                       {video.title}
                     </h4>
                     
