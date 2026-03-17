@@ -610,6 +610,19 @@ async function startServer() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    
+    // Keep-alive ping system to prevent the server from sleeping (e.g., on Render free tier)
+    const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
+    const pingUrl = process.env.PUBLIC_URL || `http://localhost:${PORT}/api/health`;
+    
+    setInterval(async () => {
+      try {
+        const res = await fetch(pingUrl);
+        console.log(`[Keep-Alive] Pinged ${pingUrl} - Status: ${res.status}`);
+      } catch (err: any) {
+        console.error(`[Keep-Alive] Ping failed:`, err.message);
+      }
+    }, PING_INTERVAL);
   });
 }
 
