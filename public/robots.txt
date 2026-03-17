@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://ais-pre-q6wvgg3sfwvtki5jo45wz6-220362105814.asia-southeast1.run.app/sitemap.xml
+Sitemap: https://viral-scope-4zqe.onrender.com/sitemap.xml
