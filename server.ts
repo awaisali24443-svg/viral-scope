@@ -4,6 +4,7 @@ import multer from 'multer';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
+import helmet from 'helmet';
 import { GoogleGenAI, Type } from '@google/genai';
 import rateLimit from 'express-rate-limit';
 
@@ -13,6 +14,8 @@ const PORT = 3000;
 // Trust proxy is required if behind a load balancer (like Cloud Run)
 app.set('trust proxy', 1);
 
+// Security headers (CSP disabled to allow Vite inline scripts in dev)
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(cors());
 app.use(express.json());
 
@@ -61,9 +64,132 @@ function getAI() {
 
 const globalTrendsFile = path.join(process.cwd(), 'global-trends.json');
 
+// Blog Data Setup
+const articlesFile = path.join(process.cwd(), 'data', 'articles.json');
+const dataDir = path.join(process.cwd(), 'data');
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
+if (!fs.existsSync(articlesFile)) {
+  fs.writeFileSync(articlesFile, JSON.stringify([]));
+}
+
 // API Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
+});
+
+// Blog Routes
+app.get('/api/articles', async (req, res) => {
+  try {
+    const data = await fs.promises.readFile(articlesFile, 'utf-8');
+    const articles = JSON.parse(data);
+    const list = articles.map((a: any) => ({
+      title: a.title,
+      slug: a.slug,
+      metaDescription: a.metaDescription,
+      publishDate: a.publishDate,
+      readingTime: a.readingTime,
+      author: a.author
+    }));
+    res.json(list);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load articles' });
+  }
+});
+
+app.get('/api/articles/:slug', async (req, res) => {
+  try {
+    const data = await fs.promises.readFile(articlesFile, 'utf-8');
+    const articles = JSON.parse(data);
+    const article = articles.find((a: any) => a.slug === req.params.slug);
+    if (!article) {
+      return res.status(404).json({ error: 'Article not found' });
+    }
+    res.json(article);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load article' });
+  }
+});
+
+app.post('/api/generate-article', async (req, res) => {
+  try {
+    const { topic, adminSecret } = req.body;
+    if (!topic) {
+      return res.status(400).json({ error: 'Topic is required' });
+    }
+
+    const expectedSecret = process.env.ADMIN_SECRET;
+    if (expectedSecret && adminSecret !== expectedSecret) {
+      return res.status(401).json({ error: 'Unauthorized: Invalid Admin Secret' });
+    }
+
+    const aiClient = getAI();
+    const prompt = `
+      You are an expert SEO content writer and social media strategist.
+      Write a comprehensive, SEO-optimized blog article about: "${topic}".
+
+      Requirements:
+      - 800-1500 words.
+      - Include an engaging introduction, actionable tips, and a strong conclusion.
+      - Use proper Markdown formatting with H2 and H3 headings.
+      - Include keywords naturally.
+      - Do NOT include the title in the markdown content itself (it will be rendered separately).
+      - At the end of the article, include these exact internal links using markdown:
+        [Analyze your video here](/upload)
+        [Check global trends](/global-trends)
+
+      Respond ONLY with a valid JSON object in this exact format:
+      {
+        "title": "SEO Optimized Title",
+        "slug": "seo-optimized-title",
+        "metaDescription": "A compelling meta description under 160 characters.",
+        "keywords": ["keyword1", "keyword2"],
+        "readingTime": "5 min read",
+        "content": "The full markdown content here..."
+      }
+    `;
+
+    const response = await aiClient.models.generateContent({
+      model: 'gemini-3.1-pro-preview',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            title: { type: Type.STRING },
+            slug: { type: Type.STRING },
+            metaDescription: { type: Type.STRING },
+            keywords: { type: Type.ARRAY, items: { type: Type.STRING } },
+            readingTime: { type: Type.STRING },
+            content: { type: Type.STRING }
+          },
+          required: ['title', 'slug', 'metaDescription', 'keywords', 'readingTime', 'content']
+        }
+      }
+    });
+
+    const generatedArticle = JSON.parse(response.text || '{}');
+    
+    generatedArticle.publishDate = new Date().toISOString();
+    generatedArticle.author = "ViralScope AI";
+
+    const data = await fs.promises.readFile(articlesFile, 'utf-8');
+    const articles = JSON.parse(data);
+    
+    if (articles.some((a: any) => a.slug === generatedArticle.slug)) {
+      generatedArticle.slug = `${generatedArticle.slug}-${Math.random().toString(36).substring(2, 7)}`;
+    }
+    
+    articles.unshift(generatedArticle);
+    await fs.promises.writeFile(articlesFile, JSON.stringify(articles, null, 2));
+
+    res.json(generatedArticle);
+  } catch (error: any) {
+    console.error('Article generation error:', error);
+    res.status(500).json({ error: error.message || 'Failed to generate article' });
+  }
 });
 
 app.get('/api/trends', async (req, res) => {
@@ -139,7 +265,8 @@ app.get('/api/global-trends', async (req, res) => {
   try {
     // Check cache (1 hour)
     if (fs.existsSync(globalTrendsFile)) {
-      const cached = JSON.parse(fs.readFileSync(globalTrendsFile, 'utf-8'));
+      const data = await fs.promises.readFile(globalTrendsFile, 'utf-8');
+      const cached = JSON.parse(data);
       const cacheAge = Date.now() - new Date(cached.lastUpdated).getTime();
       if (cacheAge < 60 * 60 * 1000) {
         return res.json(cached);
@@ -306,7 +433,7 @@ app.get('/api/global-trends', async (req, res) => {
     };
 
     // Save to cache
-    fs.writeFileSync(globalTrendsFile, JSON.stringify(resultData, null, 2));
+    await fs.promises.writeFile(globalTrendsFile, JSON.stringify(resultData, null, 2));
 
     res.json(resultData);
   } catch (error) {
@@ -326,7 +453,7 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
     const mimeType = req.file.mimetype;
 
     // Read file as base64
-    const fileData = fs.readFileSync(filePath);
+    const fileData = await fs.promises.readFile(filePath);
     const base64Data = fileData.toString('base64');
 
     const aiClient = getAI();
@@ -388,8 +515,12 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
       }
     });
 
-    // Clean up the uploaded file
-    fs.unlinkSync(filePath);
+    // Clean up the uploaded file safely
+    try {
+      if (fs.existsSync(filePath)) await fs.promises.unlink(filePath);
+    } catch (e) {
+      console.error('Failed to cleanup file:', e);
+    }
 
     let result;
     try {
@@ -404,8 +535,12 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
   } catch (error: any) {
     console.error('Analysis error:', error);
     // Clean up file if it exists and there was an error
-    if (req.file && fs.existsSync(req.file.path)) {
-      fs.unlinkSync(req.file.path);
+    try {
+      if (req.file && fs.existsSync(req.file.path)) {
+        await fs.promises.unlink(req.file.path);
+      }
+    } catch (e) {
+      console.error('Failed to cleanup file on error:', e);
     }
     
     let errorMessage = error.message || 'An error occurred during analysis';
@@ -414,6 +549,46 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
     }
     
     res.status(500).json({ error: errorMessage });
+  }
+});
+
+// Robots.txt Endpoint
+app.get('/robots.txt', (req, res) => {
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  res.type('text/plain');
+  res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${baseUrl}/sitemap.xml`);
+});
+
+// Dynamic Sitemap Endpoint
+app.get('/sitemap.xml', async (req, res) => {
+  try {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+    // Static routes
+    const staticRoutes = ['/', '/upload', '/trends', '/global-trends', '/blog', '/about', '/privacy', '/terms'];
+    staticRoutes.forEach(route => {
+      xml += `  <url>\n    <loc>${baseUrl}${route}</loc>\n    <changefreq>daily</changefreq>\n    <priority>${route === '/' ? '1.0' : '0.8'}</priority>\n  </url>\n`;
+    });
+
+    // Dynamic blog routes
+    if (fs.existsSync(articlesFile)) {
+      const data = await fs.promises.readFile(articlesFile, 'utf-8');
+      const articles = JSON.parse(data);
+      articles.forEach((article: any) => {
+        const dateStr = new Date(article.publishDate).toISOString().split('T')[0];
+        xml += `  <url>\n    <loc>${baseUrl}/blog/${article.slug}</loc>\n    <lastmod>${dateStr}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+      });
+    }
+
+    xml += `</urlset>`;
+
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+  } catch (error) {
+    console.error('Sitemap generation error:', error);
+    res.status(500).end();
   }
 });
 

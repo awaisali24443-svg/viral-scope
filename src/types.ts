@@ -56,3 +56,14 @@ export interface ViralReport {
   hashtagSuggestions: string[];
   bestPostingTime: string;
 }
+
+export interface Article {
+  title: string;
+  slug: string;
+  metaDescription: string;
+  keywords: string[];
+  readingTime: string;
+  content: string;
+  publishDate: string;
+  author: string;
+}

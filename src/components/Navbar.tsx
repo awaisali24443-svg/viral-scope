@@ -44,6 +44,15 @@ export default function Navbar() {
             <TrendingUp className="w-4 h-4" />
             Local Trends
           </Link>
+          <Link
+            to="/blog"
+            className={cn(
+              "flex items-center gap-2 text-sm font-medium transition-colors hover:text-white",
+              location.pathname.startsWith('/blog') ? "text-white" : "text-slate-400"
+            )}
+          >
+            Blog
+          </Link>
         </div>
 
         {/* Desktop CTA & Mobile Menu Button - Right */}
@@ -92,6 +101,16 @@ export default function Navbar() {
             >
               <TrendingUp className="w-5 h-5" />
               Local Trends
+            </Link>
+            <Link
+              to="/blog"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={cn(
+                "flex items-center gap-3 px-3 py-4 rounded-xl text-base font-medium transition-colors",
+                location.pathname.startsWith('/blog') ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"
+              )}
+            >
+              Blog
             </Link>
             {location.pathname !== '/upload' && (
               <Link
