@@ -557,7 +557,8 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
 
 // Robots.txt Endpoint
 app.get('/robots.txt', (req, res) => {
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
+  // Use PUBLIC_URL env var if set (crucial for custom domains), otherwise fallback to request host
+  const baseUrl = process.env.PUBLIC_URL ? process.env.PUBLIC_URL.replace(/\/$/, '') : `${req.protocol}://${req.get('host')}`;
   res.type('text/plain');
   res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${baseUrl}/sitemap.xml`);
 });
@@ -565,7 +566,8 @@ app.get('/robots.txt', (req, res) => {
 // Dynamic Sitemap Endpoint
 app.get('/sitemap.xml', async (req, res) => {
   try {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    // Use PUBLIC_URL env var if set (crucial for custom domains), otherwise fallback to request host
+    const baseUrl = process.env.PUBLIC_URL ? process.env.PUBLIC_URL.replace(/\/$/, '') : `${req.protocol}://${req.get('host')}`;
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
