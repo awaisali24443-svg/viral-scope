@@ -555,48 +555,6 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
   }
 });
 
-// Robots.txt Endpoint
-app.get('/robots.txt', (req, res) => {
-  // Use PUBLIC_URL env var if set (crucial for custom domains), otherwise fallback to request host
-  const baseUrl = process.env.PUBLIC_URL ? process.env.PUBLIC_URL.replace(/\/$/, '') : `${req.protocol}://${req.get('host')}`;
-  res.type('text/plain');
-  res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${baseUrl}/sitemap.xml`);
-});
-
-// Dynamic Sitemap Endpoint
-app.get('/sitemap.xml', async (req, res) => {
-  try {
-    // Use PUBLIC_URL env var if set (crucial for custom domains), otherwise fallback to request host
-    const baseUrl = process.env.PUBLIC_URL ? process.env.PUBLIC_URL.replace(/\/$/, '') : `${req.protocol}://${req.get('host')}`;
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-
-    // Static routes
-    const staticRoutes = ['/', '/upload', '/trends', '/global-trends', '/blog', '/about', '/privacy', '/terms'];
-    staticRoutes.forEach(route => {
-      xml += `  <url>\n    <loc>${baseUrl}${route}</loc>\n    <changefreq>daily</changefreq>\n    <priority>${route === '/' ? '1.0' : '0.8'}</priority>\n  </url>\n`;
-    });
-
-    // Dynamic blog routes
-    if (fs.existsSync(articlesFile)) {
-      const data = await fs.promises.readFile(articlesFile, 'utf-8');
-      const articles = JSON.parse(data);
-      articles.forEach((article: any) => {
-        const dateStr = new Date(article.publishDate).toISOString().split('T')[0];
-        xml += `  <url>\n    <loc>${baseUrl}/blog/${article.slug}</loc>\n    <lastmod>${dateStr}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
-      });
-    }
-
-    xml += `</urlset>`;
-
-    res.header('Content-Type', 'application/xml');
-    res.send(xml);
-  } catch (error) {
-    console.error('Sitemap generation error:', error);
-    res.status(500).end();
-  }
-});
-
 async function startServer() {
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
