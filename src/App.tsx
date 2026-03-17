@@ -5,6 +5,7 @@ import UploadPage from './pages/UploadPage';
 import AnalysisPage from './pages/AnalysisPage';
 import ResultsPage from './pages/ResultsPage';
 import TrendsPage from './pages/TrendsPage';
+import GlobalTrendsPage from './pages/GlobalTrendsPage';
 import { ViralReport } from './types';
 import Navbar from './components/Navbar';
 
@@ -33,6 +34,10 @@ export default function App() {
           <Route 
             path="/trends" 
             element={<TrendsPage />} 
+          />
+          <Route 
+            path="/global-trends" 
+            element={<GlobalTrendsPage />} 
           />
         </Routes>
       </main>

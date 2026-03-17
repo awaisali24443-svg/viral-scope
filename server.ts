@@ -59,6 +59,8 @@ function getAI() {
   return ai;
 }
 
+const globalTrendsFile = path.join(process.cwd(), 'global-trends.json');
+
 // API Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
@@ -130,6 +132,186 @@ app.get('/api/trends', async (req, res) => {
   } catch (error) {
     console.error('Trends API Error:', error);
     res.status(500).json({ error: 'Internal server error while fetching trends' });
+  }
+});
+
+app.get('/api/global-trends', async (req, res) => {
+  try {
+    // Check cache (1 hour)
+    if (fs.existsSync(globalTrendsFile)) {
+      const cached = JSON.parse(fs.readFileSync(globalTrendsFile, 'utf-8'));
+      const cacheAge = Date.now() - new Date(cached.lastUpdated).getTime();
+      if (cacheAge < 60 * 60 * 1000) {
+        return res.json(cached);
+      }
+    }
+
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: 'YouTube API key is not configured.' });
+    }
+
+    const REGIONS = ['US', 'PK', 'IN', 'BR', 'GB', 'DE', 'ID', 'JP'];
+    const allVideos: any[] = [];
+
+    // Fetch all regions in parallel
+    await Promise.all(REGIONS.map(async (region) => {
+      const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=${region}&maxResults=15&key=${apiKey}`;
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          data.items.forEach((item: any) => {
+            allVideos.push({ ...item, region });
+          });
+        }
+      } catch (e) {
+        console.error(`Failed to fetch region ${region}`, e);
+      }
+    }));
+
+    if (allVideos.length === 0) {
+      return res.status(500).json({ error: 'Failed to fetch global trends from YouTube API' });
+    }
+
+    const categoryMap: Record<string, string> = {
+      '1': 'Film & Animation', '2': 'Autos & Vehicles', '10': 'Music', '15': 'Pets & Animals',
+      '17': 'Sports', '19': 'Travel & Events', '20': 'Gaming', '22': 'People & Blogs',
+      '23': 'Comedy', '24': 'Entertainment', '25': 'News & Politics', '26': 'Howto & Style',
+      '27': 'Education', '28': 'Science & Technology', '29': 'Nonprofits & Activism'
+    };
+
+    // Group by video ID
+    const videoMap = new Map<string, any>();
+    allVideos.forEach(item => {
+      if (videoMap.has(item.id)) {
+        const existing = videoMap.get(item.id);
+        if (!existing.regionsAppeared.includes(item.region)) {
+          existing.regionsAppeared.push(item.region);
+        }
+      } else {
+        videoMap.set(item.id, {
+          id: item.id,
+          title: item.snippet.title,
+          channelName: item.snippet.channelTitle,
+          views: parseInt(item.statistics.viewCount || '0', 10),
+          thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
+          category: categoryMap[item.snippet.categoryId] || 'Other',
+          tags: item.snippet.tags || [],
+          region: item.region, // Primary region
+          regionsAppeared: [item.region],
+          publishedAt: item.snippet.publishedAt
+        });
+      }
+    });
+
+    const uniqueVideos = Array.from(videoMap.values());
+
+    // Calculate Global Score: (views / 1,000,000) * (regions_appeared * 1.5)
+    uniqueVideos.forEach(v => {
+      const viewScore = v.views / 1000000;
+      const regionMultiplier = v.regionsAppeared.length * 1.5;
+      v.globalScore = Math.round(viewScore * regionMultiplier * 10) / 10;
+    });
+
+    // Sort by global score
+    uniqueVideos.sort((a, b) => b.globalScore - a.globalScore);
+
+    // Calculate Top Category
+    const categoryCounts: Record<string, number> = {};
+    uniqueVideos.forEach(v => {
+      categoryCounts[v.category] = (categoryCounts[v.category] || 0) + v.globalScore;
+    });
+    const topCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'Mixed';
+
+    // Calculate Top Tags
+    const tagCounts: Record<string, number> = {};
+    uniqueVideos.forEach(v => {
+      v.tags.forEach((tag: string) => {
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      });
+    });
+    const topTags = Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 20)
+      .map(t => t[0]);
+    const topKeyword = topTags[0] || 'None';
+
+    // Chart Data
+    const categoryChartData = Object.entries(categoryCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, score]) => ({ name, score: Math.round(score) }));
+
+    const regionChartData = REGIONS.map(region => {
+      const count = uniqueVideos.filter(v => v.regionsAppeared.includes(region)).length;
+      return { name: region, value: count };
+    }).filter(r => r.value > 0);
+
+    // Time Chart Data (Views over time based on publishedAt)
+    const timeChartData = uniqueVideos
+      .slice(0, 10)
+      .map(v => ({
+        time: new Date(v.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        views: v.views
+      }))
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+
+    // AI Insights using Gemini
+    const aiClient = getAI();
+    const prompt = `
+      Analyze this global YouTube trending data summary:
+      Top Categories: ${Object.keys(categoryCounts).slice(0, 5).join(', ')}
+      Top Tags: ${topTags.slice(0, 10).join(', ')}
+      Regions Analyzed: ${REGIONS.join(', ')}
+      
+      Provide a structured JSON response with the following information:
+      - likelyCities: An array of 3-5 specific cities globally where this content is likely most popular (e.g., ["Mumbai", "London", "New York"]).
+      - audienceType: A string describing the audience (e.g., "Urban / Rural / Mixed" or "Gen Z Urban").
+      - culturalTargeting: A brief description of the cultural targeting or appeal.
+      - trendInsights: An array of 2-3 insightful sentences about these trends (e.g., "Fast-paced entertainment content is trending globally").
+    `;
+
+    const aiResponse = await aiClient.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            likelyCities: { type: Type.ARRAY, items: { type: Type.STRING } },
+            audienceType: { type: Type.STRING },
+            culturalTargeting: { type: Type.STRING },
+            trendInsights: { type: Type.ARRAY, items: { type: Type.STRING } }
+          },
+          required: ['likelyCities', 'audienceType', 'culturalTargeting', 'trendInsights']
+        }
+      }
+    });
+
+    const aiInsights = JSON.parse(aiResponse.text || '{}');
+
+    const resultData = {
+      lastUpdated: new Date().toISOString(),
+      totalVideosAnalyzed: uniqueVideos.length,
+      topCategory,
+      topKeyword,
+      videos: uniqueVideos.slice(0, 20), // Top 20 for UI
+      topTags,
+      categoryChartData,
+      regionChartData,
+      timeChartData,
+      aiInsights
+    };
+
+    // Save to cache
+    fs.writeFileSync(globalTrendsFile, JSON.stringify(resultData, null, 2));
+
+    res.json(resultData);
+  } catch (error) {
+    console.error('Global Trends API Error:', error);
+    res.status(500).json({ error: 'Internal server error while fetching global trends' });
   }
 });
 

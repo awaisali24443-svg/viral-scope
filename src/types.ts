@@ -7,6 +7,32 @@ export interface TrendingVideo {
   category: string;
   tags: string[];
   region: string;
+  publishedAt?: string;
+}
+
+export interface GlobalTrendingVideo extends TrendingVideo {
+  globalScore: number;
+  regionsAppeared: string[];
+}
+
+export interface AIInsights {
+  likelyCities: string[];
+  audienceType: string;
+  culturalTargeting: string;
+  trendInsights: string[];
+}
+
+export interface GlobalTrendsData {
+  lastUpdated: string;
+  totalVideosAnalyzed: number;
+  topCategory: string;
+  topKeyword: string;
+  videos: GlobalTrendingVideo[];
+  topTags: string[];
+  categoryChartData: { name: string; score: number }[];
+  regionChartData: { name: string; value: number }[];
+  timeChartData: { time: string; views: number }[];
+  aiInsights: AIInsights;
 }
 
 export interface TrendsData {

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Activity, TrendingUp } from 'lucide-react';
+import { Activity, TrendingUp, Globe2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export default function Navbar() {
@@ -18,6 +18,16 @@ export default function Navbar() {
         </Link>
         <div className="flex items-center gap-6">
           <Link
+            to="/global-trends"
+            className={cn(
+              "flex items-center gap-2 text-sm font-medium transition-colors hover:text-white",
+              location.pathname === '/global-trends' ? "text-white" : "text-slate-400"
+            )}
+          >
+            <Globe2 className="w-4 h-4" />
+            Global Trends
+          </Link>
+          <Link
             to="/trends"
             className={cn(
               "flex items-center gap-2 text-sm font-medium transition-colors hover:text-white",
@@ -25,7 +35,7 @@ export default function Navbar() {
             )}
           >
             <TrendingUp className="w-4 h-4" />
-            Live Trends
+            Local Trends
           </Link>
           <Link
             to="/upload"
