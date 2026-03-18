@@ -556,20 +556,70 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
 });
 
 async function startServer() {
-  // Explicitly serve sitemap and robots.txt with correct headers
+  // Explicitly serve sitemap and robots.txt from memory to guarantee delivery
+  const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://viral-scope-4zqe.onrender.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://viral-scope-4zqe.onrender.com/upload</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://viral-scope-4zqe.onrender.com/trends</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://viral-scope-4zqe.onrender.com/global-trends</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://viral-scope-4zqe.onrender.com/blog</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://viral-scope-4zqe.onrender.com/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://viral-scope-4zqe.onrender.com/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://viral-scope-4zqe.onrender.com/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>`;
+
+  const robotsTxt = `User-agent: *
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://viral-scope-4zqe.onrender.com/sitemap.xml`;
+
   app.get('/sitemap.xml', (req, res) => {
-    res.setHeader('Content-Type', 'application/xml');
-    res.sendFile(path.join(process.cwd(), 'public', 'sitemap.xml'));
+    res.header('Content-Type', 'application/xml');
+    res.send(sitemapXml);
   });
 
   app.get('/sitemap-live.xml', (req, res) => {
-    res.setHeader('Content-Type', 'application/xml');
-    res.sendFile(path.join(process.cwd(), 'public', 'sitemap-live.xml'));
+    res.header('Content-Type', 'application/xml');
+    res.send(sitemapXml);
   });
 
   app.get('/robots.txt', (req, res) => {
-    res.setHeader('Content-Type', 'text/plain');
-    res.sendFile(path.join(process.cwd(), 'public', 'robots.txt'));
+    res.header('Content-Type', 'text/plain');
+    res.send(robotsTxt);
   });
 
   // Vite middleware for development
