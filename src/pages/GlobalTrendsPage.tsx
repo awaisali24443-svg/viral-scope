@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { 
   Globe2, Clock, Hash, Youtube, Eye, AlertCircle, Loader2, 
-  MapPin, Users, Target, Sparkles, BarChart3, PieChart as PieChartIcon, Activity
+  MapPin, Users, Target, Sparkles, BarChart3, PieChart as PieChartIcon, Activity, Play
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, 
@@ -10,7 +10,6 @@ import {
 } from 'recharts';
 import { GlobalTrendsData } from '../types';
 import { cn } from '../lib/utils';
-import AdSlot from '../components/AdSlot';
 
 const COLORS = ['#6366f1', '#a855f7', '#ec4899', '#f43f5e', '#f97316', '#eab308', '#22c55e', '#06b6d4'];
 
@@ -18,6 +17,7 @@ export default function GlobalTrendsPage() {
   const [data, setData] = useState<GlobalTrendsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const fetchGlobalTrends = async () => {
     try {
@@ -118,11 +118,6 @@ export default function GlobalTrendsPage() {
             <span className="text-sm text-white font-medium">{formatDate(data.lastUpdated)}</span>
           </div>
         </div>
-      </div>
-
-      {/* AdSense Leaderboard Slot */}
-      <div className="mb-10 max-w-4xl mx-auto">
-        <AdSlot format="leaderboard" />
       </div>
 
       <div className="space-y-8">
@@ -239,13 +234,32 @@ export default function GlobalTrendsPage() {
             transition={{ delay: 0.4 }}
             className="bg-white/[0.02] border border-white/[0.05] rounded-3xl p-6 backdrop-blur-md"
           >
-            <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-6 font-display">
-              <BarChart3 className="w-5 h-5 text-cyan-400" />
-              Top Categories by Global Score
-            </h3>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-white flex items-center gap-2 font-display">
+                <BarChart3 className="w-5 h-5 text-cyan-400" />
+                Top Categories by Global Score
+              </h3>
+              {selectedCategory && (
+                <button 
+                  onClick={() => setSelectedCategory(null)}
+                  className="text-xs font-medium text-cyan-400 hover:text-cyan-300 transition-colors bg-cyan-500/10 px-3 py-1.5 rounded-full"
+                >
+                  Clear Filter
+                </button>
+              )}
+            </div>
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.categoryChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <BarChart 
+                  data={data.categoryChartData} 
+                  margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                  onClick={(state) => {
+                    if (state && state.activePayload && state.activePayload.length > 0) {
+                      const category = state.activePayload[0].payload.name;
+                      setSelectedCategory(category === selectedCategory ? null : category);
+                    }
+                  }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
                   <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
@@ -253,14 +267,20 @@ export default function GlobalTrendsPage() {
                     cursor={{ fill: '#ffffff05' }}
                     contentStyle={{ backgroundColor: '#1e1e28', border: '1px solid #ffffff10', borderRadius: '12px', color: '#fff' }}
                   />
-                  <Bar dataKey="score" fill="#6366f1" radius={[4, 4, 0, 0]}>
-                    {data.categoryChartData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Bar dataKey="score" fill="#6366f1" radius={[4, 4, 0, 0]} className="cursor-pointer">
+                    {data.categoryChartData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={COLORS[index % COLORS.length]} 
+                        opacity={selectedCategory ? (selectedCategory === entry.name ? 1 : 0.3) : 1}
+                        className="transition-opacity duration-300"
+                      />
                     ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
+            <p className="text-xs text-slate-500 mt-4 text-center">Click a bar to filter videos below</p>
           </motion.div>
 
           {/* Region Pie Chart */}
@@ -331,20 +351,17 @@ export default function GlobalTrendsPage() {
           </div>
         </motion.div>
 
-        {/* AdSense Responsive Slot */}
-        <div className="w-full h-[150px]">
-          <AdSlot format="responsive" />
-        </div>
-
         {/* Global Trending Videos Grid */}
         <div>
           <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3 font-display">
             <Globe2 className="w-6 h-6 text-cyan-400" />
-            Top Global Videos
+            {selectedCategory ? `${selectedCategory} Global Videos` : 'Top Global Videos'}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {data.videos.map((video, idx) => (
+            {data.videos
+              .filter(video => !selectedCategory || video.category === selectedCategory)
+              .map((video, idx) => (
               <motion.div 
                 key={video.id}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -359,6 +376,11 @@ export default function GlobalTrendsPage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-cyan-500/90 backdrop-blur-md flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                      <Play className="w-5 h-5 text-white ml-1" />
+                    </div>
+                  </div>
                   <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white flex items-center gap-1.5">
                     <Eye className="w-3.5 h-3.5 text-cyan-400" />
                     {formatViews(video.views)}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { 
-  TrendingUp, Globe2, Clock, Hash, Youtube, Eye, AlertCircle, Loader2
+  TrendingUp, Globe2, Clock, Hash, Youtube, Eye, AlertCircle, Loader2, Play
 } from 'lucide-react';
 import { TrendsData } from '../types';
 import { cn } from '../lib/utils';
@@ -200,6 +200,11 @@ export default function TrendsPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       referrerPolicy="no-referrer"
                     />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-cyan-500/90 backdrop-blur-md flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                        <Play className="w-5 h-5 text-white ml-1" />
+                      </div>
+                    </div>
                     <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white flex items-center gap-1.5">
                       <Eye className="w-3.5 h-3.5 text-cyan-400" />
                       {formatViews(video.views)}

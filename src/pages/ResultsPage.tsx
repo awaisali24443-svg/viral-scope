@@ -7,7 +7,6 @@ import {
   Flame, Target, Clock, Globe2, Lightbulb, Hash, Video, Smile, Download, Loader2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import AdSlot from '../components/AdSlot';
 
 interface ResultsPageProps {
   report: ViralReport | null;
@@ -66,11 +65,6 @@ export default function ResultsPage({ report }: ResultsPageProps) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 relative z-10">
-      
-      {/* Top Ad Slot */}
-      <div className="mb-10 max-w-4xl mx-auto">
-        <AdSlot format="leaderboard" />
-      </div>
 
       <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div>
@@ -99,17 +93,20 @@ export default function ResultsPage({ report }: ResultsPageProps) {
         {/* Left Column: Main Score & Key Metrics */}
         <div className="space-y-8 lg:col-span-1">
           
-          <div ref={scorecardRef} className="space-y-8 bg-[#0a0a0a] p-1 rounded-3xl">
+          <div ref={scorecardRef} className="space-y-8 bg-[#030303] p-1 rounded-[2rem]">
             {/* Viral Potential Score Card */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-br from-[#111111] to-[#0a0a0a] rounded-3xl p-8 text-white relative overflow-hidden border border-white/10 shadow-2xl"
+              className="bg-gradient-to-br from-[#111111] to-[#0a0a0a] rounded-[1.75rem] p-8 text-white relative overflow-hidden border border-white/[0.08] shadow-2xl"
             >
               <div className="absolute top-0 right-0 p-6 opacity-5">
                 <Flame className="w-40 h-40" />
               </div>
-              <h2 className="text-slate-400 font-medium mb-2 uppercase tracking-wider text-sm">Viral Potential Score</h2>
+              <h2 className="text-slate-400 font-medium mb-2 uppercase tracking-wider text-sm flex items-center gap-2">
+                <Flame className="w-4 h-4 text-cyan-400" />
+                Viral Potential Score
+              </h2>
               <div className="flex items-baseline gap-2 mt-4">
                 <span className={cn("text-8xl font-black tracking-tighter font-display", getScoreColor(report.viralPotentialScore, 100))}>
                   {report.viralPotentialScore}
@@ -126,7 +123,7 @@ export default function ResultsPage({ report }: ResultsPageProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white/[0.02] rounded-3xl p-8 border border-white/[0.05] space-y-8 backdrop-blur-md"
+              className="bg-white/[0.02] rounded-[1.75rem] p-8 border border-white/[0.05] space-y-8 backdrop-blur-xl"
             >
               <h3 className="font-bold text-white flex items-center gap-2 text-lg font-display">
                 <Target className="w-5 h-5 text-cyan-400" />
@@ -139,11 +136,6 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             </motion.div>
           </div>
 
-          {/* Sidebar Ad Slot */}
-          <div className="mt-8">
-            <AdSlot format="rectangle" />
-          </div>
-
         </div>
 
         {/* Right Column: Detailed Analysis */}
@@ -154,18 +146,18 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-3xl p-8 border border-cyan-500/20 flex flex-col sm:flex-row gap-8 items-start sm:items-center justify-between backdrop-blur-md"
+            className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-3xl p-8 border border-cyan-500/20 flex flex-col sm:flex-row gap-8 items-start sm:items-center justify-between backdrop-blur-xl"
           >
             <div>
               <h3 className="text-xs font-bold text-cyan-400 mb-2 uppercase tracking-wider">Best Platform</h3>
-              <p className="text-3xl font-display font-bold text-white">{report.bestPlatform}</p>
+              <p className="text-3xl font-display font-bold text-white tracking-tight">{report.bestPlatform}</p>
             </div>
             <div className="hidden sm:block w-px h-16 bg-white/10" />
             <div>
               <h3 className="text-xs font-bold text-blue-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
                 <Clock className="w-4 h-4" /> Best Posting Time
               </h3>
-              <p className="text-2xl font-display text-white font-medium">{report.bestPostingTime}</p>
+              <p className="text-3xl font-display text-white font-bold tracking-tight">{report.bestPostingTime}</p>
             </div>
           </motion.div>
 
@@ -174,7 +166,7 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white/[0.02] rounded-3xl p-8 lg:p-10 border border-white/[0.05] backdrop-blur-md"
+            className="bg-white/[0.02] rounded-3xl p-8 lg:p-10 border border-white/[0.05] backdrop-blur-xl"
           >
             <h3 className="text-2xl font-bold text-white mb-8 font-display">Content Analysis</h3>
             
@@ -186,13 +178,13 @@ export default function ResultsPage({ report }: ResultsPageProps) {
                 <div className="space-y-6">
                   <div>
                     <span className="block text-xs text-slate-500 mb-2 uppercase tracking-wider">Detected Topic</span>
-                    <span className="inline-block bg-white/10 text-white px-4 py-2 rounded-xl text-sm font-semibold border border-white/5">
+                    <span className="inline-block bg-white/[0.05] text-white px-4 py-2 rounded-xl text-sm font-medium border border-white/[0.08]">
                       {report.videoTopic}
                     </span>
                   </div>
                   <div>
                     <span className="block text-xs text-slate-500 mb-2 uppercase tracking-wider">Editing Style</span>
-                    <p className="text-base text-slate-300 leading-relaxed">{report.editingStyle}</p>
+                    <p className="text-base text-slate-300 leading-relaxed font-medium">{report.editingStyle}</p>
                   </div>
                 </div>
               </div>
@@ -203,18 +195,18 @@ export default function ResultsPage({ report }: ResultsPageProps) {
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {report.detectedEmotions.map((emotion, idx) => (
-                     <span key={idx} className="bg-blue-500/10 text-blue-300 px-4 py-2 rounded-xl text-sm font-semibold border border-blue-500/20">
+                     <span key={idx} className="bg-blue-500/10 text-blue-300 px-4 py-2 rounded-xl text-sm font-medium border border-blue-500/20">
                       {emotion}
                     </span>
                   ))}
                 </div>
 
-                <h4 className="flex items-center gap-2 text-sm font-bold text-blue-400 mt-10 mb-4 uppercase tracking-wider">
+                <h4 className="flex items-center gap-2 text-sm font-bold text-indigo-400 mt-10 mb-4 uppercase tracking-wider">
                   <Globe2 className="w-4 h-4" /> Top Regions
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {report.bestRegions.map((region, idx) => (
-                    <span key={idx} className="bg-blue-500/10 text-blue-300 px-4 py-2 rounded-xl text-sm font-semibold border border-blue-500/20">
+                    <span key={idx} className="bg-indigo-500/10 text-indigo-300 px-4 py-2 rounded-xl text-sm font-medium border border-indigo-500/20">
                       {region}
                     </span>
                   ))}
@@ -223,30 +215,25 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             </div>
           </motion.div>
 
-          {/* In-Feed Ad Slot */}
-          <div className="w-full">
-            <AdSlot format="in-article" />
-          </div>
-
           {/* Action Plan */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white/[0.02] rounded-3xl p-8 lg:p-10 border border-white/[0.05] backdrop-blur-md"
+            className="bg-white/[0.02] rounded-3xl p-8 lg:p-10 border border-white/[0.05] backdrop-blur-xl"
           >
             <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3 font-display">
               <Lightbulb className="w-7 h-7 text-cyan-400" />
               Optimization Strategy
             </h3>
             
-            <div className="space-y-5">
+            <div className="space-y-4">
               {report.improvementSuggestions.map((suggestion, idx) => (
-                <div key={idx} className="flex items-start gap-4 bg-white/5 p-4 rounded-2xl border border-white/5">
+                <div key={idx} className="flex items-start gap-4 bg-white/[0.03] p-5 rounded-2xl border border-white/[0.05] hover:bg-white/[0.05] transition-colors">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm font-bold border border-cyan-500/30">
                     {idx + 1}
                   </div>
-                  <p className="text-slate-300 pt-1 text-base leading-relaxed">{suggestion}</p>
+                  <p className="text-slate-300 pt-1 text-base leading-relaxed font-medium">{suggestion}</p>
                 </div>
               ))}
             </div>
@@ -257,7 +244,7 @@ export default function ResultsPage({ report }: ResultsPageProps) {
               </h4>
               <div className="flex flex-wrap gap-3">
                 {report.hashtagSuggestions.map((tag, idx) => (
-                  <span key={idx} className="text-slate-300 font-medium hover:text-cyan-400 transition-colors cursor-pointer bg-white/5 px-4 py-2 rounded-lg border border-white/5">
+                  <span key={idx} className="text-slate-300 font-medium hover:text-cyan-400 transition-colors cursor-pointer bg-white/[0.05] px-4 py-2 rounded-lg border border-white/[0.08]">
                     {tag.startsWith('#') ? tag : `#${tag}`}
                   </span>
                 ))}
