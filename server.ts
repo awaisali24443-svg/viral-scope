@@ -19,32 +19,38 @@ app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false 
 app.use(cors());
 app.use(express.json());
 
-// Explicitly serve sitemap and robots.txt from the public directory
+// Explicitly serve sitemap and robots.txt
 app.get('/sitemap.xml', (req, res) => {
-  const filePath = path.join(process.cwd(), 'public', 'sitemap.xml');
+  const isProd = process.env.NODE_ENV === 'production';
+  const filePath = path.join(process.cwd(), isProd ? 'dist' : 'public', 'sitemap.xml');
   if (fs.existsSync(filePath)) {
-    res.setHeader('Content-Type', 'application/xml');
-    res.sendFile(filePath);
+    const xml = fs.readFileSync(filePath, 'utf8');
+    res.set('Content-Type', 'application/xml');
+    res.send(xml);
   } else {
     res.status(404).send('Not found');
   }
 });
 
 app.get('/sitemap-live.xml', (req, res) => {
-  const filePath = path.join(process.cwd(), 'public', 'sitemap-live.xml');
+  const isProd = process.env.NODE_ENV === 'production';
+  const filePath = path.join(process.cwd(), isProd ? 'dist' : 'public', 'sitemap-live.xml');
   if (fs.existsSync(filePath)) {
-    res.setHeader('Content-Type', 'application/xml');
-    res.sendFile(filePath);
+    const xml = fs.readFileSync(filePath, 'utf8');
+    res.set('Content-Type', 'application/xml');
+    res.send(xml);
   } else {
     res.status(404).send('Not found');
   }
 });
 
 app.get('/robots.txt', (req, res) => {
-  const filePath = path.join(process.cwd(), 'public', 'robots.txt');
+  const isProd = process.env.NODE_ENV === 'production';
+  const filePath = path.join(process.cwd(), isProd ? 'dist' : 'public', 'robots.txt');
   if (fs.existsSync(filePath)) {
-    res.setHeader('Content-Type', 'text/plain');
-    res.sendFile(filePath);
+    const txt = fs.readFileSync(filePath, 'utf8');
+    res.set('Content-Type', 'text/plain');
+    res.send(txt);
   } else {
     res.status(404).send('Not found');
   }
