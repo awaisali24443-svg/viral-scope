@@ -19,42 +19,15 @@ app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false 
 app.use(cors());
 app.use(express.json());
 
-// Explicitly serve sitemap and robots.txt
-app.get('/sitemap.xml', (req, res) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  const filePath = path.join(process.cwd(), isProd ? 'dist' : 'public', 'sitemap.xml');
-  if (fs.existsSync(filePath)) {
-    const xml = fs.readFileSync(filePath, 'utf8');
-    res.set('Content-Type', 'application/xml');
-    res.send(xml);
-  } else {
-    res.status(404).send('Not found');
+// Serve static files from 'public' directory first
+// This ensures sitemap.xml and robots.txt are served correctly before any other routes
+app.use(express.static(path.join(process.cwd(), 'public'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.xml')) {
+      res.setHeader('Content-Type', 'application/xml');
+    }
   }
-});
-
-app.get('/sitemap-live.xml', (req, res) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  const filePath = path.join(process.cwd(), isProd ? 'dist' : 'public', 'sitemap-live.xml');
-  if (fs.existsSync(filePath)) {
-    const xml = fs.readFileSync(filePath, 'utf8');
-    res.set('Content-Type', 'application/xml');
-    res.send(xml);
-  } else {
-    res.status(404).send('Not found');
-  }
-});
-
-app.get('/robots.txt', (req, res) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  const filePath = path.join(process.cwd(), isProd ? 'dist' : 'public', 'robots.txt');
-  if (fs.existsSync(filePath)) {
-    const txt = fs.readFileSync(filePath, 'utf8');
-    res.set('Content-Type', 'text/plain');
-    res.send(txt);
-  } else {
-    res.status(404).send('Not found');
-  }
-});
+}));
 
 // Set up rate limiter for the analyze endpoint
 const analyzeLimiter = rateLimit({
@@ -602,7 +575,13 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
+    app.use(express.static(distPath, {
+      setHeaders: (res, path) => {
+        if (path.endsWith('.xml')) {
+          res.setHeader('Content-Type', 'application/xml');
+        }
+      }
+    }));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
