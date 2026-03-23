@@ -16,6 +16,7 @@ import AdminBlogPage from './pages/AdminBlogPage';
 import { ViralReport } from './types';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import WelcomePopup from './components/WelcomePopup';
 
 export default function App() {
   const [report, setReport] = useState<ViralReport | null>(null);
@@ -23,6 +24,7 @@ export default function App() {
 
   return (
     <HelmetProvider>
+      <WelcomePopup />
       <div className="min-h-screen bg-[#030303] text-slate-50 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 relative flex flex-col">
         {/* Global Background Grid */}
         <div className="fixed inset-0 pointer-events-none z-0">
