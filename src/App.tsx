@@ -30,6 +30,11 @@ export default function App() {
         </div>
         
         <div className="relative z-10 flex flex-col min-h-screen">
+          {/* Awais Codex Welcome Banner */}
+          <div className="bg-gradient-to-r from-blue-600/20 via-cyan-500/20 to-blue-600/20 border-b border-cyan-500/20 py-2 px-4 text-center text-sm font-medium text-cyan-100 backdrop-blur-md">
+            🚀 Welcome to ViralScope! Proudly developed and powered by <span className="font-bold text-white">Awais Codex</span>.
+          </div>
+          
           <Navbar />
           <main className="flex-grow relative">
           <Routes>

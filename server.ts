@@ -86,7 +86,17 @@ if (!fs.existsSync(articlesFile)) {
 
 // API Routes
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+  res.json({ 
+    status: 'ok', 
+    message: 'Welcome to Awais Codex! Server is alive and running.' 
+  });
+});
+
+app.get('/ping', (req, res) => {
+  res.json({ 
+    status: 'success', 
+    message: 'Pong! Greetings from Awais Codex.' 
+  });
 });
 
 // Blog Routes
@@ -588,16 +598,19 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Welcome to Awais Codex! Server running on http://localhost:${PORT}`);
     
     // Keep-alive ping system to prevent the server from sleeping (e.g., on Render free tier)
     const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
-    const pingUrl = process.env.PUBLIC_URL || `http://localhost:${PORT}/api/health`;
+    const pingUrl = process.env.RENDER_EXTERNAL_URL 
+      ? `${process.env.RENDER_EXTERNAL_URL}/ping` 
+      : process.env.PUBLIC_URL || `http://localhost:${PORT}/ping`;
     
     setInterval(async () => {
       try {
         const res = await fetch(pingUrl);
-        console.log(`[Keep-Alive] Pinged ${pingUrl} - Status: ${res.status}`);
+        const data = await res.json();
+        console.log(`[Keep-Alive] Pinged ${pingUrl} - Status: ${res.status} - Message: ${data.message || 'OK'}`);
       } catch (err: any) {
         console.error(`[Keep-Alive] Ping failed:`, err.message);
       }
