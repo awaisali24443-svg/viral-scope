@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
+Allow: /sitemap.xml
+Allow: /sitemap-live.xml
 Disallow: /admin/
 
+Sitemap: https://viral-scope-4zqe.onrender.com/sitemap.xml
 Sitemap: https://viral-scope-4zqe.onrender.com/sitemap-live.xml
