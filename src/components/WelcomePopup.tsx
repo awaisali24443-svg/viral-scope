@@ -56,13 +56,12 @@ export default function WelcomePopup() {
             </div>
             
             <h2 className="mb-2 text-center text-2xl font-bold text-white">
-              Pakhair Raghlay! <br/>
               Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">ViralScope</span>
             </h2>
             
             <p className="mb-6 text-center text-slate-300 leading-relaxed">
-              Proudly developed in Shabqadar, KPK by <strong className="text-white">Awais Codex</strong>. 
-              We're thrilled to have you here. Get ready to analyze, optimize, and skyrocket your viral journey in Pakistan and beyond!
+              Proudly developed by <strong className="text-white">Awais Codex</strong> for creators worldwide. 
+              We're thrilled to have you here. Get ready to analyze, optimize, and skyrocket your global viral journey!
             </p>
             
             <button

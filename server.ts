@@ -407,16 +407,16 @@ app.get('/api/global-trends', async (req, res) => {
     // AI Insights using Gemini
     const aiClient = getAI();
     const prompt = `
-      Analyze this YouTube trending data summary, but tailor your insights specifically for content creators in Pakistan, especially in Khyber Pakhtunkhwa (KPK) and Shabqadar.
+      Analyze this global YouTube trending data summary:
       Top Categories: ${Object.keys(categoryCounts).slice(0, 5).join(', ')}
       Top Tags: ${topTags.slice(0, 10).join(', ')}
       Regions Analyzed: ${REGIONS.join(', ')}
       
       Provide a structured JSON response with the following information:
-      - likelyCities: An array of 3-5 specific cities in Pakistan where this type of content is likely most popular (e.g., ["Peshawar", "Shabqadar", "Lahore", "Karachi", "Mardan"]).
-      - audienceType: A string describing the Pakistani audience (e.g., "Pashto speaking youth", "Urban / Rural / Mixed").
-      - culturalTargeting: A brief description of how these global trends can be adapted for Pakistani/Pashtun culture.
-      - trendInsights: An array of 2-3 insightful sentences about how creators in KPK/Pakistan can leverage these trends.
+      - likelyCities: An array of 3-5 specific cities globally where this content is likely most popular (e.g., ["Mumbai", "London", "New York", "Tokyo", "Dubai"]).
+      - audienceType: A string describing the audience (e.g., "Urban / Rural / Mixed" or "Gen Z Urban").
+      - culturalTargeting: A brief description of the cultural targeting or global appeal.
+      - trendInsights: An array of 2-3 insightful sentences about these global trends.
     `;
 
     const aiResponse = await aiClient.models.generateContent({
@@ -479,26 +479,21 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
     const aiClient = getAI();
 
     const prompt = `
-      Analyze this video for its viral potential on ${platform || 'social media'}, specifically targeting the audience in Pakistan, especially Khyber Pakhtunkhwa (KPK) and areas like Shabqadar.
-      
-      CRITICAL CONTEXT:
-      - The target audience primarily speaks Pashto and Urdu.
-      - Consider local cultural nuances, humor, trends (like PSL cricket, Pashto dramas, local TikTokers, Rabab music, local memes, and daily life in KPK/Pakistan).
-      - Evaluate how well this content resonates with the youth and general public in Pakistan.
+      Analyze this video for its viral potential on ${platform || 'social media'}, targeting the ${region || 'Global'} region.
       
       Perform deep analysis and provide a structured JSON response with the following information:
-      - videoTopic: The main topic of the video.
-      - detectedEmotions: An array of emotional signals.
-      - editingStyle: A brief description of the editing style.
-      - visualQualityScore: A score from 0 to 10.
-      - hookStrengthScore: A score from 0 to 10 evaluating the first 3 seconds.
-      - trendSimilarityScore: A score from 0 to 10 indicating how well it matches current Pakistani/KPK trends.
+      - videoTopic: The main topic of the video (e.g., football trick, cooking tutorial, gaming highlight).
+      - detectedEmotions: An array of emotional signals (e.g., humor, surprise, excitement, curiosity).
+      - editingStyle: A brief description of the editing style (pacing, transitions, camera movement).
+      - visualQualityScore: A score from 0 to 10 evaluating lighting, clarity, stability, and contrast.
+      - hookStrengthScore: A score from 0 to 10 evaluating the first 3 seconds (action, curiosity, surprise).
+      - trendSimilarityScore: A score from 0 to 10 indicating how well it matches current trends in the target region.
       - viralPotentialScore: A final score from 0 to 100.
-      - bestPlatform: The single best platform for this video in Pakistan (TikTok, YouTube Shorts, Instagram Reels, or SnackVideo).
-      - bestRegions: An array of the best regions for this video (e.g., KPK, Punjab, Sindh, Balochistan, Shabqadar, Peshawar).
-      - improvementSuggestions: An array of at least 10 specific suggestions to improve virality for a Pakistani/Pashtun audience.
-      - hashtagSuggestions: An array of 5-10 recommended hashtags (include relevant Urdu/Pashto hashtags in English script like #foryou #kpk #shabqadar #pashto #peshawar).
-      - bestPostingTime: A suggested best time to post in Pakistan Standard Time (PKT) (e.g., "Weekdays 6 PM - 8 PM PKT").
+      - bestPlatform: The single best platform for this video (TikTok, YouTube Shorts, or Instagram Reels).
+      - bestRegions: An array of the best regions globally for this video (e.g., North America, South Asia, Europe, Latin America, Middle East, Southeast Asia).
+      - improvementSuggestions: An array of at least 10 specific suggestions to improve virality.
+      - hashtagSuggestions: An array of 5-10 recommended hashtags.
+      - bestPostingTime: A suggested best time to post (e.g., "Weekdays 6 PM - 8 PM EST").
     `;
 
     const response = await aiClient.models.generateContent({
