@@ -64,10 +64,10 @@ export default function LandingPage() {
           <div className="mx-auto max-w-2xl lg:text-center">
             <h2 className="text-sm font-bold leading-7 text-cyan-400 uppercase tracking-widest font-display">Deep Analysis</h2>
             <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-5xl font-display">
-              Everything you need to go viral
+              Everything you need to go viral in Pakistan
             </p>
             <p className="mt-6 text-lg leading-8 text-slate-400">
-              Our AI evaluates multiple dimensions of your content to provide actionable insights tailored for TikTok, YouTube Shorts, and Instagram Reels.
+              Our AI evaluates multiple dimensions of your content to provide actionable insights tailored for TikTok, YouTube Shorts, and Instagram Reels, with a special focus on the Pakistani and KPK audience.
             </p>
           </div>
           <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
@@ -76,18 +76,18 @@ export default function LandingPage() {
                 <div className="rounded-xl bg-cyan-500/10 p-3 ring-1 ring-cyan-500/20 mb-6 group-hover:bg-cyan-500/20 transition-colors">
                   <Zap className="h-6 w-6 text-cyan-400" />
                 </div>
-                <dt className="font-bold text-white text-xl font-display">Hook Strength</dt>
+                <dt className="font-bold text-white text-xl font-display">Pashto & Urdu Context</dt>
                 <dd className="mt-3 leading-relaxed text-slate-400">
-                  We analyze the crucial first 3 seconds of your video to determine if it has the power to stop the scroll and capture attention.
+                  Our AI understands local cultural nuances, humor, and languages. Whether it's Pashto poetry or Urdu memes, we analyze what resonates locally.
                 </dd>
               </div>
               <div className="group flex flex-col items-start bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.05] p-8 rounded-3xl hover:border-blue-500/30 transition-all duration-500">
                 <div className="rounded-xl bg-blue-500/10 p-3 ring-1 ring-blue-500/20 mb-6 group-hover:bg-blue-500/20 transition-colors">
                   <TrendingUp className="h-6 w-6 text-blue-400" />
                 </div>
-                <dt className="font-bold text-white text-xl font-display">Trend Similarity</dt>
+                <dt className="font-bold text-white text-xl font-display">Local Trend Similarity</dt>
                 <dd className="mt-3 leading-relaxed text-slate-400">
-                  Compare your content against real-time trending signals to see if you're riding the wave of current social media algorithms.
+                  Compare your content against real-time trending signals in Pakistan and KPK to see if you're riding the wave of current social media algorithms.
                 </dd>
               </div>
               <div className="group flex flex-col items-start bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.05] p-8 rounded-3xl hover:border-indigo-500/30 transition-all duration-500">
@@ -96,7 +96,7 @@ export default function LandingPage() {
                 </div>
                 <dt className="font-bold text-white text-xl font-display">Actionable Strategy</dt>
                 <dd className="mt-3 leading-relaxed text-slate-400">
-                  Get a detailed report with specific improvement suggestions, optimal posting times, and the best platform for your specific video.
+                  Get a detailed report with specific improvement suggestions, optimal posting times in PKT, and the best platform for your specific video.
                 </dd>
               </div>
             </dl>
