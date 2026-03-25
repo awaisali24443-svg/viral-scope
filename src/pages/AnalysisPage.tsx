@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Loader2, Sparkles, Play, Zap, TrendingUp, Clock } from 'lucide-react';
 import { ViralReport } from '../types';
+import { useAuth } from '../AuthContext';
+import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 
 interface AnalysisPageProps {
   videoFile: File | null;
@@ -16,6 +20,7 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
   const [isQueued, setIsQueued] = useState(false);
   const [queueTimeLeft, setQueueTimeLeft] = useState(0);
   const isMountedRef = useRef(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!videoFile) {
@@ -71,6 +76,25 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
 
         const data: ViralReport = await response.json();
         
+        // Save to Firestore if user is logged in
+        if (user) {
+          try {
+            const reportRef = await addDoc(collection(db, 'reports'), {
+              userId: user.uid,
+              videoTopic: data.videoTopic || 'Unknown Topic',
+              viralPotentialScore: data.viralPotentialScore || 0,
+              bestPlatform: data.bestPlatform || platform,
+              reportData: JSON.stringify(data),
+              createdAt: serverTimestamp(),
+              isPublic: false
+            });
+            // Add the reportId to the data so we can use it later (e.g., for sharing)
+            data.id = reportRef.id;
+          } catch (dbError) {
+            handleFirestoreError(dbError, OperationType.CREATE, 'reports');
+          }
+        }
+
         if (isMountedRef.current) {
           clearInterval(progressInterval);
           setIsQueued(false); // Success, remove queue state
@@ -107,7 +131,7 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
       if (progressInterval) clearInterval(progressInterval);
       if (queueInterval) clearInterval(queueInterval);
     };
-  }, [videoFile, navigate, setReport]);
+  }, [videoFile, navigate, setReport, user]);
 
   if (error) {
     return (

@@ -13,6 +13,7 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
   const [file, setLocalFile] = useState<File | null>(null);
   const [platform, setPlatform] = useState('TikTok');
   const [region, setRegion] = useState('North America');
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -43,15 +44,16 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
   };
 
   const handleFile = (selectedFile: File) => {
+    setError(null);
     const validTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
     if (validTypes.includes(selectedFile.type)) {
       if (selectedFile.size > 15 * 1024 * 1024) {
-        alert('File size exceeds 15MB limit.');
+        setError('File size exceeds 15MB limit.');
         return;
       }
       setLocalFile(selectedFile);
     } else {
-      alert('Please upload a valid video file (MP4, MOV, WEBM).');
+      setError('Please upload a valid video file (MP4, MOV, WEBM).');
     }
   };
 
@@ -78,6 +80,12 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-8">
+          {error && (
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 py-3 rounded-xl flex items-center gap-3">
+              <X className="w-5 h-5 flex-shrink-0" />
+              <p className="text-sm font-medium">{error}</p>
+            </div>
+          )}
           {/* File Upload Area */}
           <div>
             <label className="block text-sm font-semibold text-slate-300 mb-3">Video File</label>

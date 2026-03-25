@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+       return request.auth != null;
+    }
+    function isOwner(userId) {
+       return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isDocOwner() {
+       return isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+    function uidUnchanged() {
+       return !('uid' in request.resource.data) || request.resource.data.uid == request.auth.uid;
+    }
+    function uidNotModified() {
+       return !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid;
+    }
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['uid', 'email', 'displayName', 'photoURL', 'createdAt', 'role']) &&
+             data.uid is string &&
+             data.email is string &&
+             data.createdAt is timestamp &&
+             data.role in ['user', 'admin'];
+    }
+    function isValidReport(data) {
+      return hasOnlyAllowedFields(['userId', 'videoTopic', 'viralPotentialScore', 'bestPlatform', 'reportData', 'createdAt', 'isPublic']) &&
+             data.userId is string &&
+             data.videoTopic is string && data.videoTopic.size() < 200 &&
+             data.viralPotentialScore is number &&
+             data.bestPlatform is string && data.bestPlatform.size() < 50 &&
+             data.reportData is string && data.reportData.size() < 100000 &&
+             data.createdAt is timestamp &&
+             data.isPublic is bool;
+    }
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "awaisali00000728@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && isOwner(userId) && request.resource.data.role == 'user';
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && isOwner(userId) && request.resource.data.role == resource.data.role;
+    }
+
+    match /reports/{reportId} {
+      allow read: if (isAuthenticated() && request.auth.uid == resource.data.userId) || resource.data.isPublic == true || isAdmin();
+      allow create: if isAuthenticated() && isValidReport(request.resource.data) && request.auth.uid == request.resource.data.userId;
+      allow update: if isAuthenticated() && isValidReport(request.resource.data) && request.auth.uid == resource.data.userId && request.resource.data.userId == resource.data.userId;
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+  }
+}

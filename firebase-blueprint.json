@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the application.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "timestamp" },
+        "role": { "type": "string", "enum": ["user", "admin"] }
+      },
+      "required": ["uid", "email", "createdAt", "role"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "A saved viral analysis report.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "videoTopic": { "type": "string" },
+        "viralPotentialScore": { "type": "number" },
+        "bestPlatform": { "type": "string" },
+        "reportData": { "type": "string", "description": "JSON stringified full report data" },
+        "createdAt": { "type": "timestamp" },
+        "isPublic": { "type": "boolean" }
+      },
+      "required": ["userId", "videoTopic", "viralPotentialScore", "bestPlatform", "reportData", "createdAt", "isPublic"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles."
+    },
+    "reports/{reportId}": {
+      "schema": "Report",
+      "description": "Saved reports."
+    }
+  }
+}

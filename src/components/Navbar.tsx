@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Activity, TrendingUp, Globe2, Menu, X } from 'lucide-react';
+import { Activity, TrendingUp, Globe2, Menu, X, LayoutDashboard, Image as ImageIcon, LogIn, LogOut } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useAuth } from '../AuthContext';
 
 export default function Navbar() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, login, logout } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/[0.05] bg-[#030303]/60 backdrop-blur-2xl supports-[backdrop-filter]:bg-[#030303]/60">
@@ -48,28 +50,49 @@ export default function Navbar() {
             Global Trends
           </Link>
           <Link
-            to="/trends"
+            to="/thumbnail-analyzer"
             className={cn(
               "flex items-center gap-2 text-sm font-medium transition-colors hover:text-white",
-              location.pathname === '/trends' ? "text-white" : "text-slate-400"
+              location.pathname === '/thumbnail-analyzer' ? "text-white" : "text-slate-400"
             )}
           >
-            <TrendingUp className="w-4 h-4" />
-            Local Trends
+            <ImageIcon className="w-4 h-4" />
+            Thumbnails
           </Link>
-          <Link
-            to="/blog"
-            className={cn(
-              "flex items-center gap-2 text-sm font-medium transition-colors hover:text-white",
-              location.pathname.startsWith('/blog') ? "text-white" : "text-slate-400"
-            )}
-          >
-            Blog
-          </Link>
+          {user && (
+            <Link
+              to="/dashboard"
+              className={cn(
+                "flex items-center gap-2 text-sm font-medium transition-colors hover:text-white",
+                location.pathname === '/dashboard' ? "text-white" : "text-slate-400"
+              )}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Dashboard
+            </Link>
+          )}
         </div>
 
         {/* Desktop CTA & Mobile Menu Button - Right */}
         <div className="flex-1 flex items-center justify-end gap-4">
+          {user ? (
+            <button
+              onClick={logout}
+              className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={login}
+              className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+            >
+              <LogIn className="w-4 h-4" />
+              Login
+            </button>
+          )}
+
           {location.pathname !== '/upload' && (
             <Link
               to="/upload"
@@ -105,26 +128,50 @@ export default function Navbar() {
               Global Trends
             </Link>
             <Link
-              to="/trends"
+              to="/thumbnail-analyzer"
               onClick={() => setIsMobileMenuOpen(false)}
               className={cn(
                 "flex items-center gap-3 px-3 py-4 rounded-xl text-base font-medium transition-colors",
-                location.pathname === '/trends' ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"
+                location.pathname === '/thumbnail-analyzer' ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"
               )}
             >
-              <TrendingUp className="w-5 h-5" />
-              Local Trends
+              <ImageIcon className="w-5 h-5" />
+              Thumbnail Analyzer
             </Link>
-            <Link
-              to="/blog"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={cn(
-                "flex items-center gap-3 px-3 py-4 rounded-xl text-base font-medium transition-colors",
-                location.pathname.startsWith('/blog') ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"
+            {user && (
+              <Link
+                to="/dashboard"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-4 rounded-xl text-base font-medium transition-colors",
+                  location.pathname === '/dashboard' ? "bg-white/10 text-white" : "text-slate-400 hover:bg-white/5 hover:text-white"
+                )}
+              >
+                <LayoutDashboard className="w-5 h-5" />
+                Dashboard
+              </Link>
+            )}
+            
+            <div className="pt-4 border-t border-white/10">
+              {user ? (
+                <button
+                  onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                  className="flex items-center gap-3 px-3 py-4 w-full rounded-xl text-base font-medium text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </button>
+              ) : (
+                <button
+                  onClick={() => { login(); setIsMobileMenuOpen(false); }}
+                  className="flex items-center gap-3 px-3 py-4 w-full rounded-xl text-base font-medium text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
+                >
+                  <LogIn className="w-5 h-5" />
+                  Login
+                </button>
               )}
-            >
-              Blog
-            </Link>
+            </div>
+
             {location.pathname !== '/upload' && (
               <Link
                 to="/upload"

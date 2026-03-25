@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Calendar, Clock, User, ArrowLeft, Loader2, AlertCircle, List } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { Helmet } from 'react-helmet-async';
 import { Article } from '../types';
 
 export default function BlogPostPage() {
@@ -108,15 +107,6 @@ export default function BlogPostPage() {
 
   return (
     <>
-      <Helmet>
-        <title>{article.title} | ViralScope AI</title>
-        <meta name="description" content={article.metaDescription} />
-        <meta name="keywords" content={article.keywords.join(', ')} />
-        <meta property="og:title" content={article.title} />
-        <meta property="og:description" content={article.metaDescription} />
-        <meta property="og:type" content="article" />
-      </Helmet>
-
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 relative z-10">
         <Link 
           to="/blog" 

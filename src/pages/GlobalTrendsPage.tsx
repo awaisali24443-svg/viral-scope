@@ -253,7 +253,7 @@ export default function GlobalTrendsPage() {
                 <BarChart 
                   data={data.categoryChartData} 
                   margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                  onClick={(state) => {
+                  onClick={(state: any) => {
                     if (state && state.activePayload && state.activePayload.length > 0) {
                       const category = state.activePayload[0].payload.name;
                       setSelectedCategory(category === selectedCategory ? null : category);

@@ -43,6 +43,7 @@ export interface TrendsData {
 }
 
 export interface ViralReport {
+  id?: string;
   videoTopic: string;
   detectedEmotions: string[];
   editingStyle: string;

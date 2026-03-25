@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { PenTool, Loader2, CheckCircle, AlertCircle, Lock } from 'lucide-react';
-import { Helmet } from 'react-helmet-async';
 
 export default function AdminBlogPage() {
   const [topic, setTopic] = useState('');
@@ -49,11 +48,6 @@ export default function AdminBlogPage() {
 
   return (
     <>
-      <Helmet>
-        <title>Admin: Generate Blog | ViralScope AI</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
-
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

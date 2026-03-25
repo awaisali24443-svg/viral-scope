@@ -10,18 +10,19 @@ import { cn } from '../lib/utils';
 
 interface ResultsPageProps {
   report: ViralReport | null;
+  isSharedView?: boolean;
 }
 
-export default function ResultsPage({ report }: ResultsPageProps) {
+export default function ResultsPage({ report, isSharedView = false }: ResultsPageProps) {
   const navigate = useNavigate();
   const scorecardRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
-    if (!report) {
+    if (!report && !isSharedView) {
       navigate('/upload');
     }
-  }, [report, navigate]);
+  }, [report, navigate, isSharedView]);
 
   if (!report) return null;
 
@@ -80,12 +81,21 @@ export default function ResultsPage({ report }: ResultsPageProps) {
             {isDownloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             {isDownloading ? 'Generating...' : 'Download Scorecard'}
           </button>
-          <button
-            onClick={() => navigate('/upload')}
-            className="rounded-full bg-white/5 px-6 py-3 text-sm font-semibold text-white border border-white/10 hover:bg-white/10 transition-all hover:scale-105"
-          >
-            Analyze Another Video
-          </button>
+          {!isSharedView ? (
+            <button
+              onClick={() => navigate('/upload')}
+              className="rounded-full bg-white/5 px-6 py-3 text-sm font-semibold text-white border border-white/10 hover:bg-white/10 transition-all hover:scale-105"
+            >
+              Analyze Another Video
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/upload')}
+              className="rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 text-sm font-semibold text-white hover:scale-105 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)]"
+            >
+              Create Your Own Report
+            </button>
+          )}
         </div>
       </div>
 

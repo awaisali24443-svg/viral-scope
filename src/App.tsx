@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
-import { HelmetProvider } from 'react-helmet-async';
 import LandingPage from './pages/LandingPage';
 import UploadPage from './pages/UploadPage';
 import AnalysisPage from './pages/AnalysisPage';
@@ -13,6 +12,9 @@ import AboutPage from './pages/AboutPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import AdminBlogPage from './pages/AdminBlogPage';
+import DashboardPage from './pages/DashboardPage';
+import SharedReportPage from './pages/SharedReportPage';
+import ThumbnailAnalyzerPage from './pages/ThumbnailAnalyzerPage';
 import { ViralReport } from './types';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -23,7 +25,7 @@ export default function App() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
 
   return (
-    <HelmetProvider>
+    <>
       <WelcomePopup />
       <div className="min-h-screen bg-[#030303] text-slate-50 font-sans selection:bg-cyan-500/30 selection:text-cyan-200 relative flex flex-col">
         {/* Global Background Grid */}
@@ -67,11 +69,14 @@ export default function App() {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/shared/:id" element={<SharedReportPage />} />
+            <Route path="/thumbnail-analyzer" element={<ThumbnailAnalyzerPage />} />
           </Routes>
           </main>
           <Footer />
         </div>
       </div>
-    </HelmetProvider>
+    </>
   );
 }

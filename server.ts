@@ -59,6 +59,11 @@ const upload = multer({
   limits: { fileSize: 15 * 1024 * 1024 } // 15MB limit for inlineData
 });
 
+const thumbnailUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit for images
+});
+
 // Initialize Gemini API
 let ai: GoogleGenAI | null = null;
 function getAI() {
@@ -190,7 +195,9 @@ app.post('/api/generate-article', async (req, res) => {
       }
     });
 
-    const generatedArticle = JSON.parse(response.text || '{}');
+    const text = response.text || '{}';
+    const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+    const generatedArticle = JSON.parse(cleanedText);
     
     generatedArticle.publishDate = new Date().toISOString();
     generatedArticle.author = "ViralScope AI";
@@ -437,7 +444,9 @@ app.get('/api/global-trends', async (req, res) => {
       }
     });
 
-    const aiInsights = JSON.parse(aiResponse.text || '{}');
+    const text = aiResponse.text || '{}';
+    const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+    const aiInsights = JSON.parse(cleanedText);
 
     const resultData = {
       lastUpdated: new Date().toISOString(),
@@ -459,6 +468,54 @@ app.get('/api/global-trends', async (req, res) => {
   } catch (error) {
     console.error('Global Trends API Error:', error);
     res.status(500).json({ error: 'Internal server error while fetching global trends' });
+  }
+});
+
+app.post('/api/analyze-thumbnail', thumbnailUpload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file uploaded' });
+    }
+
+    const imagePart = {
+      inlineData: {
+        data: req.file.buffer.toString("base64"),
+        mimeType: req.file.mimetype,
+      },
+    };
+
+    const prompt = `
+      Analyze this thumbnail for its potential to drive clicks on YouTube or TikTok.
+      Provide a JSON response with the following structure:
+      {
+        "ctrScore": 8, // Number from 1-10 estimating Click-Through Rate potential
+        "strengths": ["Clear subject", "High contrast"], // Array of strings
+        "improvements": ["Text is too small", "Background is cluttered"] // Array of strings
+      }
+      Do not include markdown formatting like \`\`\`json. Just return the raw JSON string.
+    `;
+
+    const aiClient = getAI();
+    const response = await aiClient.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: { parts: [imagePart, { text: prompt }] },
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    const text = response.text;
+    if (!text) {
+      throw new Error("No text returned from Gemini");
+    }
+
+    const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+    const result = JSON.parse(cleanedText);
+
+    res.json(result);
+  } catch (error: any) {
+    console.error('Thumbnail analysis error:', error);
+    res.status(500).json({ error: error.message || 'Failed to analyze thumbnail' });
   }
 });
 
@@ -498,15 +555,17 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
 
     const response = await aiClient.models.generateContent({
       model: 'gemini-3-flash-preview',
-      contents: [
-        {
-          inlineData: {
-            data: base64Data,
-            mimeType: mimeType,
-          }
-        },
-        prompt
-      ],
+      contents: {
+        parts: [
+          {
+            inlineData: {
+              data: base64Data,
+              mimeType: mimeType,
+            }
+          },
+          { text: prompt }
+        ]
+      },
       config: {
         responseMimeType: 'application/json',
         responseSchema: {
@@ -544,7 +603,9 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
 
     let result;
     try {
-      result = JSON.parse(response.text || '{}');
+      const text = response.text || '{}';
+      const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+      result = JSON.parse(cleanedText);
     } catch (e) {
       console.error("Failed to parse Gemini response as JSON", response.text);
       return res.status(500).json({ error: 'Failed to parse AI response' });

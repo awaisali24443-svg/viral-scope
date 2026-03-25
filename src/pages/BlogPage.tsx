@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { BookOpen, Calendar, Clock, Loader2, AlertCircle } from 'lucide-react';
 import { Article } from '../types';
-import { Helmet } from 'react-helmet-async';
 
 export default function BlogPage() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -37,11 +36,6 @@ export default function BlogPage() {
 
   return (
     <>
-      <Helmet>
-        <title>ViralScope AI Blog - YouTube & TikTok Growth Strategies</title>
-        <meta name="description" content="Learn how to go viral on YouTube, TikTok, and Instagram Reels. Read our latest AI-generated strategies and insights." />
-      </Helmet>
-      
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 relative z-10">
         <div className="mb-12 text-center max-w-3xl mx-auto">
           <h1 className="text-4xl font-extrabold text-white tracking-tight flex items-center justify-center gap-3 font-display mb-4">
