@@ -32,7 +32,7 @@ app.use(express.static(path.join(process.cwd(), 'public'), {
 // Set up rate limiter for the analyze endpoint
 const analyzeLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 100, // Limit each IP to 100 requests per hour
+  max: 500, // Limit each IP to 500 requests per hour
   message: { error: 'Too many videos analyzed from this IP. Please try again after an hour to protect our free API limits.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -176,7 +176,7 @@ app.post('/api/generate-article', async (req, res) => {
     `;
 
     const response = await aiClient.models.generateContent({
-      model: 'gemini-3.1-pro-preview',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -578,7 +578,7 @@ app.post('/api/analyze-url', analyzeLimiter, async (req, res) => {
     `;
 
     const response = await aiClient.models.generateContent({
-      model: 'gemini-3.1-pro-preview',
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
         tools: [{ urlContext: {} }],
