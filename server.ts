@@ -661,19 +661,18 @@ async function startServer() {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Welcome to Awais Codex! Server running on http://localhost:${PORT}`);
     
-    // Keep-alive ping system to prevent the server from sleeping (e.g., on Render free tier)
+    // Keep-alive (Reviver) ping system to prevent the server from sleeping
     const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
-    const pingUrl = process.env.RENDER_EXTERNAL_URL 
-      ? `${process.env.RENDER_EXTERNAL_URL}/ping` 
-      : process.env.PUBLIC_URL || `http://localhost:${PORT}/ping`;
+    const appUrl = process.env.RENDER_EXTERNAL_URL || process.env.PUBLIC_URL || 'https://ais-dev-q6wvgg3sfwvtki5jo45wz6-220362105814.asia-southeast1.run.app';
+    const pingUrl = `${appUrl.replace(/\/$/, '')}/ping`;
     
-    setInterval(async () => {
+    const reviverPing = setInterval(async () => {
       try {
         const res = await fetch(pingUrl);
         const data = await res.json();
-        console.log(`[Keep-Alive] Pinged ${pingUrl} - Status: ${res.status} - Message: ${data.message || 'OK'}`);
+        console.log(`[Reviver/Keep-Alive] Pinged ${pingUrl} - Status: ${res.status} - Message: ${data.message || 'OK'}`);
       } catch (err: any) {
-        console.error(`[Keep-Alive] Ping failed:`, err.message);
+        console.error(`[Reviver/Keep-Alive] Ping failed:`, err.message);
       }
     }, PING_INTERVAL);
   });
