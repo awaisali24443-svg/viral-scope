@@ -209,6 +209,7 @@ export default function UploadPage({ setVideoFile }: UploadPageProps) {
                 <option value="TikTok">TikTok</option>
                 <option value="YouTube Shorts">YouTube Shorts</option>
                 <option value="Instagram Reels">Instagram Reels</option>
+                <option value="YouTube (Long Form)">YouTube (Long Form)</option>
               </select>
             </div>
 

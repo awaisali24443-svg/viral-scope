@@ -33,7 +33,7 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
     let progressInterval: NodeJS.Timeout;
     let queueInterval: NodeJS.Timeout;
 
-    const attemptAnalysis = async () => {
+    const attemptAnalysis = async (retryCount = 0) => {
       try {
         const platform = sessionStorage.getItem('targetPlatform') || 'TikTok';
         const region = sessionStorage.getItem('targetRegion') || 'Global';
@@ -64,6 +64,18 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
 
         // Handle Rate Limiting (Queue)
         if (response.status === 429) {
+          const errorData = await response.json().catch(() => ({}));
+          
+          // If it's our IP rate limiter, fail immediately
+          if (errorData.error && errorData.error.includes('Too many videos')) {
+            throw new Error(errorData.error);
+          }
+
+          // If we've retried too many times, fail
+          if (retryCount >= 2) {
+            throw new Error(errorData.error || 'AI API is currently overloaded or out of quota. Please try again later.');
+          }
+
           setIsQueued(true);
           // Wait 60 seconds before retrying (polling for API reset)
           setQueueTimeLeft(60);
@@ -74,7 +86,7 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
                 if (prev <= 1) {
                   clearInterval(queueInterval);
                   // Don't set isQueued to false yet, keep them in the queue UI while it retries
-                  attemptAnalysis(); // Retry
+                  attemptAnalysis(retryCount + 1); // Retry
                   return 60; // Reset timer for the next potential failure
                 }
                 return prev - 1;

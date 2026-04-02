@@ -32,7 +32,7 @@ app.use(express.static(path.join(process.cwd(), 'public'), {
 // Set up rate limiter for the analyze endpoint
 const analyzeLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 10, // Limit each IP to 10 requests per hour
+  max: 100, // Limit each IP to 100 requests per hour
   message: { error: 'Too many videos analyzed from this IP. Please try again after an hour to protect our free API limits.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -567,12 +567,12 @@ app.post('/api/analyze-url', analyzeLimiter, async (req, res) => {
       - detectedEmotions: An array of emotional signals (e.g., humor, surprise, excitement, curiosity).
       - editingStyle: A brief description of the editing style (pacing, transitions, camera movement).
       - visualQualityScore: A score from 0 to 10 evaluating lighting, clarity, stability, and contrast.
-      - hookStrengthScore: A score from 0 to 10 evaluating the first 3 seconds (action, curiosity, surprise).
+      - hookStrengthScore: A score from 0 to 10 evaluating the first 3-10 seconds (action, curiosity, surprise).
       - trendSimilarityScore: A score from 0 to 10 indicating how well it matches current trends in the target region.
       - viralPotentialScore: A final score from 0 to 100.
-      - bestPlatform: The single best platform for this video (TikTok, YouTube Shorts, or Instagram Reels).
+      - bestPlatform: The single best platform for this video (TikTok, YouTube Shorts, Instagram Reels, or YouTube Long Form).
       - bestRegions: An array of the best regions globally for this video (e.g., North America, South Asia, Europe, Latin America, Middle East, Southeast Asia).
-      - improvementSuggestions: An array of at least 10 specific suggestions to improve virality.
+      - improvementSuggestions: An array of at least 10 specific suggestions to improve virality. For Long Form, focus on retention and storytelling.
       - hashtagSuggestions: An array of 5-10 recommended hashtags.
       - bestPostingTime: A suggested best time to post (e.g., "Weekdays 6 PM - 8 PM EST").
     `;
@@ -660,12 +660,12 @@ app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res
       - detectedEmotions: An array of emotional signals (e.g., humor, surprise, excitement, curiosity).
       - editingStyle: A brief description of the editing style (pacing, transitions, camera movement).
       - visualQualityScore: A score from 0 to 10 evaluating lighting, clarity, stability, and contrast.
-      - hookStrengthScore: A score from 0 to 10 evaluating the first 3 seconds (action, curiosity, surprise).
+      - hookStrengthScore: A score from 0 to 10 evaluating the first 3-10 seconds (action, curiosity, surprise).
       - trendSimilarityScore: A score from 0 to 10 indicating how well it matches current trends in the target region.
       - viralPotentialScore: A final score from 0 to 100.
-      - bestPlatform: The single best platform for this video (TikTok, YouTube Shorts, or Instagram Reels).
+      - bestPlatform: The single best platform for this video (TikTok, YouTube Shorts, Instagram Reels, or YouTube Long Form).
       - bestRegions: An array of the best regions globally for this video (e.g., North America, South Asia, Europe, Latin America, Middle East, Southeast Asia).
-      - improvementSuggestions: An array of at least 10 specific suggestions to improve virality.
+      - improvementSuggestions: An array of at least 10 specific suggestions to improve virality. For Long Form, focus on retention and storytelling.
       - hashtagSuggestions: An array of 5-10 recommended hashtags.
       - bestPostingTime: A suggested best time to post (e.g., "Weekdays 6 PM - 8 PM EST").
     `;
