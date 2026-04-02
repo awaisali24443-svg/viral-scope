@@ -23,7 +23,8 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!videoFile) {
+    const videoUrl = sessionStorage.getItem('videoUrl');
+    if (!videoFile && !videoUrl) {
       navigate('/upload');
       return;
     }
@@ -37,15 +38,29 @@ export default function AnalysisPage({ videoFile, setReport }: AnalysisPageProps
         const platform = sessionStorage.getItem('targetPlatform') || 'TikTok';
         const region = sessionStorage.getItem('targetRegion') || 'Global';
 
-        const formData = new FormData();
-        formData.append('video', videoFile);
-        formData.append('platform', platform);
-        formData.append('region', region);
+        let response;
 
-        const response = await fetch('/api/analyze', {
-          method: 'POST',
-          body: formData,
-        });
+        if (videoFile) {
+          const formData = new FormData();
+          formData.append('video', videoFile);
+          formData.append('platform', platform);
+          formData.append('region', region);
+
+          response = await fetch('/api/analyze', {
+            method: 'POST',
+            body: formData,
+          });
+        } else if (videoUrl) {
+          response = await fetch('/api/analyze-url', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ url: videoUrl, platform, region }),
+          });
+        } else {
+          throw new Error('No video source provided.');
+        }
 
         // Handle Rate Limiting (Queue)
         if (response.status === 429) {

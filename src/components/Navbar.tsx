@@ -77,7 +77,8 @@ export default function Navbar() {
         <div className="flex-1 flex items-center justify-end gap-4">
           {user ? (
             <button
-              onClick={logout}
+              type="button"
+              onClick={(e) => { e.preventDefault(); logout(); }}
               className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
             >
               <LogOut className="w-4 h-4" />
@@ -85,7 +86,8 @@ export default function Navbar() {
             </button>
           ) : (
             <button
-              onClick={login}
+              type="button"
+              onClick={(e) => { e.preventDefault(); login(); }}
               className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
             >
               <LogIn className="w-4 h-4" />
@@ -155,7 +157,8 @@ export default function Navbar() {
             <div className="pt-4 border-t border-white/10">
               {user ? (
                 <button
-                  onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); logout(); setIsMobileMenuOpen(false); }}
                   className="flex items-center gap-3 px-3 py-4 w-full rounded-xl text-base font-medium text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
                 >
                   <LogOut className="w-5 h-5" />
@@ -163,7 +166,8 @@ export default function Navbar() {
                 </button>
               ) : (
                 <button
-                  onClick={() => { login(); setIsMobileMenuOpen(false); }}
+                  type="button"
+                  onClick={(e) => { e.preventDefault(); login(); setIsMobileMenuOpen(false); }}
                   className="flex items-center gap-3 px-3 py-4 w-full rounded-xl text-base font-medium text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
                 >
                   <LogIn className="w-5 h-5" />

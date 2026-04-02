@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
 import { Upload, Image as ImageIcon, Sparkles, Loader2, AlertCircle } from 'lucide-react';
+import { useAuth } from '../AuthContext';
+import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 
 export default function ThumbnailAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null);
@@ -8,6 +12,7 @@ export default function ThumbnailAnalyzerPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any | null>(null);
+  const { user } = useAuth();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -45,6 +50,20 @@ export default function ThumbnailAnalyzerPage() {
 
       const data = await response.json();
       setResult(data);
+
+      if (user) {
+        try {
+          await addDoc(collection(db, 'thumbnailReports'), {
+            userId: user.uid,
+            ctrScore: data.ctrScore || 0,
+            reportData: JSON.stringify(data),
+            createdAt: serverTimestamp(),
+            isPublic: false
+          });
+        } catch (dbError) {
+          handleFirestoreError(dbError, OperationType.CREATE, 'thumbnailReports');
+        }
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'An unexpected error occurred.');

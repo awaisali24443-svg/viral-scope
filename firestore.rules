@@ -39,6 +39,14 @@ service cloud.firestore {
              data.createdAt is timestamp &&
              data.isPublic is bool;
     }
+    function isValidThumbnailReport(data) {
+      return hasOnlyAllowedFields(['userId', 'ctrScore', 'reportData', 'createdAt', 'isPublic']) &&
+             data.userId is string &&
+             data.ctrScore is number &&
+             data.reportData is string && data.reportData.size() < 100000 &&
+             data.createdAt is timestamp &&
+             data.isPublic is bool;
+    }
     function isAdmin() {
       return isAuthenticated() &&
         (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
@@ -58,6 +66,13 @@ service cloud.firestore {
       allow read: if (isAuthenticated() && request.auth.uid == resource.data.userId) || resource.data.isPublic == true || isAdmin();
       allow create: if isAuthenticated() && isValidReport(request.resource.data) && request.auth.uid == request.resource.data.userId;
       allow update: if isAuthenticated() && isValidReport(request.resource.data) && request.auth.uid == resource.data.userId && request.resource.data.userId == resource.data.userId;
+      allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
+    }
+
+    match /thumbnailReports/{reportId} {
+      allow read: if (isAuthenticated() && request.auth.uid == resource.data.userId) || resource.data.isPublic == true || isAdmin();
+      allow create: if isAuthenticated() && isValidThumbnailReport(request.resource.data) && request.auth.uid == request.resource.data.userId;
+      allow update: if isAuthenticated() && isValidThumbnailReport(request.resource.data) && request.auth.uid == resource.data.userId && request.resource.data.userId == resource.data.userId;
       allow delete: if isAuthenticated() && request.auth.uid == resource.data.userId;
     }
   }

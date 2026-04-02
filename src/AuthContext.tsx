@@ -62,11 +62,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const handleLogin = async () => {
-    await loginWithGoogle();
+    try {
+      await loginWithGoogle();
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      if (error.code === 'auth/unauthorized-domain') {
+        alert(`Login Failed: This domain is not authorized for OAuth operations for your Firebase project. \n\nPlease go to Firebase Console -> Authentication -> Settings -> Authorized Domains and add:\n${window.location.hostname}`);
+      } else {
+        alert(`Login Failed: ${error.message || 'An unexpected error occurred'}`);
+      }
+    }
   };
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (

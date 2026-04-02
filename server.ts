@@ -519,6 +519,123 @@ app.post('/api/analyze-thumbnail', thumbnailUpload.single('image'), async (req, 
   }
 });
 
+app.post('/api/analyze-url', analyzeLimiter, async (req, res) => {
+  try {
+    const { url, platform, region } = req.body;
+    if (!url) {
+      return res.status(400).json({ error: 'No URL provided' });
+    }
+
+    const aiClient = getAI();
+    let additionalContext = '';
+
+    // Try to extract YouTube metadata if it's a YouTube URL
+    const ytRegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(ytRegExp);
+    const ytVideoId = (match && match[2].length === 11) ? match[2] : null;
+
+    if (ytVideoId && process.env.YOUTUBE_API_KEY) {
+      try {
+        const ytResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${ytVideoId}&key=${process.env.YOUTUBE_API_KEY}`);
+        if (ytResponse.ok) {
+          const ytData = await ytResponse.json();
+          if (ytData.items && ytData.items.length > 0) {
+            const item = ytData.items[0];
+            additionalContext = `
+              Video Metadata Context:
+              Title: ${item.snippet.title}
+              Description: ${item.snippet.description}
+              Tags: ${item.snippet.tags ? item.snippet.tags.join(', ') : 'None'}
+              Views: ${item.statistics.viewCount}
+              Likes: ${item.statistics.likeCount}
+              Comments: ${item.statistics.commentCount}
+            `;
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch YouTube metadata:', e);
+      }
+    }
+
+    const prompt = `
+      Analyze this video URL for its viral potential on ${platform || 'social media'}, targeting the ${region || 'Global'} region.
+      Video URL: ${url}
+      ${additionalContext}
+      
+      Perform deep analysis and provide a structured JSON response with the following information:
+      - videoTopic: The main topic of the video (e.g., football trick, cooking tutorial, gaming highlight).
+      - detectedEmotions: An array of emotional signals (e.g., humor, surprise, excitement, curiosity).
+      - editingStyle: A brief description of the editing style (pacing, transitions, camera movement).
+      - visualQualityScore: A score from 0 to 10 evaluating lighting, clarity, stability, and contrast.
+      - hookStrengthScore: A score from 0 to 10 evaluating the first 3 seconds (action, curiosity, surprise).
+      - trendSimilarityScore: A score from 0 to 10 indicating how well it matches current trends in the target region.
+      - viralPotentialScore: A final score from 0 to 100.
+      - bestPlatform: The single best platform for this video (TikTok, YouTube Shorts, or Instagram Reels).
+      - bestRegions: An array of the best regions globally for this video (e.g., North America, South Asia, Europe, Latin America, Middle East, Southeast Asia).
+      - improvementSuggestions: An array of at least 10 specific suggestions to improve virality.
+      - hashtagSuggestions: An array of 5-10 recommended hashtags.
+      - bestPostingTime: A suggested best time to post (e.g., "Weekdays 6 PM - 8 PM EST").
+    `;
+
+    const response = await aiClient.models.generateContent({
+      model: 'gemini-3.1-pro-preview',
+      contents: prompt,
+      config: {
+        tools: [{ urlContext: {} }],
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            videoTopic: { type: Type.STRING },
+            detectedEmotions: { type: Type.ARRAY, items: { type: Type.STRING } },
+            editingStyle: { type: Type.STRING },
+            visualQualityScore: { type: Type.NUMBER },
+            hookStrengthScore: { type: Type.NUMBER },
+            trendSimilarityScore: { type: Type.NUMBER },
+            viralPotentialScore: { type: Type.NUMBER },
+            bestPlatform: { type: Type.STRING },
+            bestRegions: { type: Type.ARRAY, items: { type: Type.STRING } },
+            improvementSuggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
+            hashtagSuggestions: { type: Type.ARRAY, items: { type: Type.STRING } },
+            bestPostingTime: { type: Type.STRING },
+          },
+          required: [
+            'videoTopic', 'detectedEmotions', 'editingStyle', 'visualQualityScore', 
+            'hookStrengthScore', 'trendSimilarityScore', 'viralPotentialScore', 
+            'bestPlatform', 'bestRegions', 'improvementSuggestions', 
+            'hashtagSuggestions', 'bestPostingTime'
+          ]
+        }
+      }
+    });
+
+    let result;
+    try {
+      const text = response.text || '{}';
+      const cleanedText = text.replace(/```json\n?|\n?```/g, '').trim();
+      result = JSON.parse(cleanedText);
+    } catch (e) {
+      console.error("Failed to parse Gemini response as JSON", response.text);
+      return res.status(500).json({ error: 'Failed to parse AI response' });
+    }
+
+    res.json(result);
+
+  } catch (error: any) {
+    console.error('URL Analysis error:', error);
+    
+    let errorMessage = error.message || 'An error occurred during URL analysis';
+    let statusCode = 500;
+    
+    if (error.status === 429 || errorMessage.toLowerCase().includes('quota') || errorMessage.toLowerCase().includes('too many requests')) {
+      statusCode = 429;
+      errorMessage = 'Gemini API Quota Exceeded. You have been placed in the queue and your request will retry automatically.';
+    }
+    
+    res.status(statusCode).json({ error: errorMessage });
+  }
+});
+
 app.post('/api/analyze', analyzeLimiter, upload.single('video'), async (req, res) => {
   try {
     if (!req.file) {
