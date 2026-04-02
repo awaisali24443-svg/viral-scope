@@ -1,20 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, db, loginWithGoogle, logout } from './firebase';
+import { auth, db, logout } from './firebase';
 import { handleFirestoreError, OperationType } from './lib/firestore-errors';
+import AuthModal from './components/AuthModal';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: () => Promise<void>;
+  login: () => void;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => {},
+  login: () => {},
   logout: async () => {},
 });
 
@@ -23,6 +24,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -43,8 +45,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           try {
             await setDoc(userRef, {
               uid: currentUser.uid,
-              email: currentUser.email,
-              displayName: currentUser.displayName || 'User',
+              email: currentUser.email || '',
+              displayName: currentUser.displayName || (currentUser.isAnonymous ? 'Guest User' : 'User'),
               photoURL: currentUser.photoURL || '',
               createdAt: serverTimestamp(),
               role: 'user'
@@ -61,17 +63,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => unsubscribe();
   }, []);
 
-  const handleLogin = async () => {
-    try {
-      await loginWithGoogle();
-    } catch (error: any) {
-      console.error("Login failed:", error);
-      if (error.code === 'auth/unauthorized-domain') {
-        alert(`Login Failed: This domain is not authorized for OAuth operations for your Firebase project. \n\nPlease go to Firebase Console -> Authentication -> Settings -> Authorized Domains and add:\n${window.location.hostname}`);
-      } else {
-        alert(`Login Failed: ${error.message || 'An unexpected error occurred'}`);
-      }
-    }
+  const handleLogin = () => {
+    setIsModalOpen(true);
   };
 
   const handleLogout = async () => {
@@ -85,6 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <AuthContext.Provider value={{ user, loading, login: handleLogin, logout: handleLogout }}>
       {children}
+      <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </AuthContext.Provider>
   );
 };
